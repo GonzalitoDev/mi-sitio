@@ -3,306 +3,157 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CiberBlog - Noticias de Ciberseguridad</title>
+  <title>Estudio Ciberseguridad - Página Informativa</title>
   <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 0 20px 50px;
       background-color: #121212;
       color: #e0e0e0;
+      line-height: 1.6;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
     }
-    h1 {
+    header {
+      max-width: 900px;
+      width: 100%;
       text-align: center;
+      margin-bottom: 40px;
+    }
+    header h1 {
+      font-size: 2.8rem;
       color: #00ff99;
-      margin-bottom: 30px;
-      font-weight: 700;
-      text-shadow: 0 0 5px #00ff99;
+      text-shadow: 0 0 6px #00ff99;
+      margin-bottom: 10px;
     }
-    form {
-      background: #1e1e1e;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #00ff99aa;
-      margin-bottom: 30px;
-    }
-    label {
-      font-weight: 600;
-      display: block;
-      margin-bottom: 8px;
-      color: #00ff99;
-    }
-    input[type="text"], textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 20px;
-      border: 1px solid #00ff99;
-      border-radius: 6px;
-      background-color: #121212;
-      color: #e0e0e0;
-      font-size: 16px; /* para evitar zoom iOS */
-      resize: vertical;
-      transition: border-color 0.3s ease;
-    }
-    input[type="text"]:focus, textarea:focus {
-      outline: none;
-      border-color: #00ffcc;
-      box-shadow: 0 0 8px #00ffcc;
-    }
-    button {
-      background-color: #00ff99;
-      color: #121212;
-      border: none;
-      padding: 12px 25px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      box-shadow: 0 0 10px #00ff99;
-      user-select: none;
-      min-height: 44px; /* tamaño táctil recomendado */
-      width: 100%; /* que ocupe todo el ancho */
-      box-sizing: border-box;
-    }
-    button:hover {
-      background-color: #00cc77;
-      box-shadow: 0 0 15px #00cc77;
-    }
-    #search {
-      margin-bottom: 20px;
-      padding: 10px;
-      font-size: 1rem;
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid #00ff99;
-      background-color: #121212;
-      color: #e0e0e0;
-      box-shadow: 0 0 6px #00ff9977 inset;
-      transition: border-color 0.3s ease;
-      box-sizing: border-box;
-    }
-    #search:focus {
-      outline: none;
-      border-color: #00ffcc;
-      box-shadow: 0 0 10px #00ffcc inset;
-    }
-    .post {
-      background: #1f1f1f;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 30px;
-      box-shadow: 0 0 12px #00ff9977;
-      position: relative;
-      word-wrap: break-word;
-    }
-    .post h2 {
-      margin-top: 0;
-      color: #00ffa3;
-    }
-    .post time {
-      font-size: 0.9rem;
+    header p {
+      font-size: 1.2rem;
       color: #66ffbb;
-      display: block;
-      margin-bottom: 15px;
     }
-    .post p {
-      white-space: pre-wrap;
-      line-height: 1.4;
-      font-size: 1rem;
-      color: #d0f0dc;
+    main {
+      max-width: 900px;
+      width: 100%;
     }
-    .delete-btn {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      background: #ff4c4c;
-      border: none;
-      color: white;
-      font-weight: 700;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      cursor: pointer;
-      box-shadow: 0 0 8px #ff4c4c;
-      transition: background-color 0.3s ease;
-      user-select: none;
+    section {
+      margin-bottom: 40px;
+      background-color: #1e1e1e;
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00ff9977;
     }
-    .delete-btn:hover {
-      background: #cc0000;
-      box-shadow: 0 0 12px #cc0000;
-    }
-    #counter {
+    section h2 {
       color: #00ff99;
-      font-weight: 600;
-      margin-bottom: 15px;
-      text-align: right;
-      font-size: 1rem;
-      user-select: none;
+      margin-bottom: 20px;
+      font-size: 1.9rem;
+      border-bottom: 2px solid #00ff99;
+      padding-bottom: 6px;
     }
+    section p, section ul {
+      font-size: 1.1rem;
+      color: #c4f3d4;
+    }
+    section ul {
+      list-style: inside square;
+      margin-top: 10px;
+    }
+    section ul li {
+      margin-bottom: 8px;
+    }
+    a {
+      color: #00ff99;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    a:hover {
+      color: #00cc77;
+      text-decoration: underline;
+    }
+    footer {
+      margin-top: auto;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      width: 100%;
+      max-width: 900px;
+    }
+    /* Responsive */
     @media (max-width: 600px) {
       body {
-        padding: 15px 10px 40px;
+        padding: 20px 10px;
       }
-      button, input[type="text"], textarea, #search {
+      header h1 {
+        font-size: 2rem;
+      }
+      section {
+        padding: 20px 15px;
+      }
+      section h2 {
+        font-size: 1.5rem;
+      }
+      section p, section ul {
         font-size: 1rem;
-        width: 100%;
-        box-sizing: border-box;
-      }
-      .post {
-        padding: 15px;
-        margin-bottom: 20px;
-      }
-      #counter {
-        font-size: 0.9rem;
       }
     }
   </style>
 </head>
 <body>
-  <h1>CiberBlog - Noticias de Ciberseguridad</h1>
+  <header>
+    <h1>Hola, soy [Tu Nombre]</h1>
+    <p>Estudiante de Ciberseguridad apasionado por proteger el mundo digital</p>
+  </header>
 
-  <form id="postForm" autocomplete="off" spellcheck="false">
-    <label for="title">Título de la noticia:</label>
-    <input type="text" id="title" name="title" placeholder="Ej: Nuevo malware detectado" maxlength="100" required />
+  <main>
+    <section id="que-es">
+      <h2>¿Qué es la Ciberseguridad?</h2>
+      <p>
+        La ciberseguridad es la práctica de proteger sistemas, redes y programas de ataques digitales. Estos ataques suelen tener como objetivo acceder, modificar o destruir información sensible, extorsionar a los usuarios o interrumpir procesos comerciales normales.
+      </p>
+    </section>
 
-    <label for="content">Contenido:</label>
-    <textarea id="content" name="content" rows="7" placeholder="Escribe aquí la noticia o publicación..." maxlength="2000" required></textarea>
+    <section id="beneficios">
+      <h2>Beneficios de estudiar Ciberseguridad</h2>
+      <ul>
+        <li>Alta demanda laboral en todo el mundo.</li>
+        <li>Oportunidad de trabajar en empresas de tecnología, finanzas, gobierno y más.</li>
+        <li>Contribuir a la protección de datos y la privacidad de las personas.</li>
+        <li>Salarios competitivos y posibilidades de crecimiento profesional.</li>
+      </ul>
+    </section>
 
-    <button type="submit">Publicar</button>
-  </form>
+    <section id="areas">
+      <h2>Áreas de estudio</h2>
+      <ul>
+        <li>Seguridad de redes y sistemas.</li>
+        <li>Análisis y respuesta ante incidentes.</li>
+        <li>Criptografía y protección de datos.</li>
+        <li>Auditoría y cumplimiento normativo.</li>
+        <li>Ingeniería social y concienciación.</li>
+      </ul>
+    </section>
 
-  <input type="text" id="search" placeholder="Buscar noticias..." aria-label="Buscar noticias" />
+    <section id="recursos">
+      <h2>Recursos recomendados</h2>
+      <p>Para profundizar en ciberseguridad, puedes consultar:</p>
+      <ul>
+        <li><a href="https://www.coursera.org/specializations/cyber-security" target="_blank" rel="noopener">Especialización en Ciberseguridad - Coursera</a></li>
+        <li><a href="https://www.cybrary.it" target="_blank" rel="noopener">Cybrary - Cursos gratuitos y de pago</a></li>
+        <li><a href="https://www.khanacademy.org/computing/computer-science" target="_blank" rel="noopener">Khan Academy - Ciencias de la Computación</a></li>
+        <li><a href="https://www.owasp.org" target="_blank" rel="noopener">OWASP - Proyecto de seguridad web</a></li>
+      </ul>
+    </section>
+  </main>
 
-  <div id="counter">0 publicaciones</div>
-
-  <section id="posts" aria-live="polite" aria-atomic="true"></section>
-
-  <script>
-    const form = document.getElementById('postForm');
-    const postsContainer = document.getElementById('posts');
-    const searchInput = document.getElementById('search');
-    const counter = document.getElementById('counter');
-
-    // Cargar posts guardados en localStorage
-    let posts = JSON.parse(localStorage.getItem('ciberblog-posts') || '[]');
-
-    // Función para formatear fecha en DD/MM/YYYY HH:MM
-    function formatDate(date) {
-      const d = date.getDate().toString().padStart(2, '0');
-      const m = (date.getMonth() +1).toString().padStart(2, '0');
-      const y = date.getFullYear();
-      const h = date.getHours().toString().padStart(2,'0');
-      const min = date.getMinutes().toString().padStart(2,'0');
-      return `${d}/${m}/${y} ${h}:${min}`;
-    }
-
-    // Renderiza un post
-    function renderPost(post, index) {
-      const postDiv = document.createElement('div');
-      postDiv.className = 'post';
-      postDiv.dataset.index = index;
-
-      const title = document.createElement('h2');
-      title.textContent = post.title;
-
-      const time = document.createElement('time');
-      time.textContent = formatDate(new Date(post.date));
-      time.setAttribute('datetime', new Date(post.date).toISOString());
-
-      const content = document.createElement('p');
-      content.textContent = post.content;
-
-      const delBtn = document.createElement('button');
-      delBtn.className = 'delete-btn';
-      delBtn.setAttribute('aria-label', `Eliminar publicación: ${post.title}`);
-      delBtn.textContent = '×';
-
-      delBtn.addEventListener('click', () => {
-        if(confirm(`¿Seguro que quieres eliminar la publicación "${post.title}"?`)) {
-          posts.splice(index,1);
-          saveAndRender();
-        }
-      });
-
-      postDiv.appendChild(title);
-      postDiv.appendChild(time);
-      postDiv.appendChild(content);
-      postDiv.appendChild(delBtn);
-
-      return postDiv;
-    }
-
-    // Guardar posts en localStorage
-    function savePosts() {
-      localStorage.setItem('ciberblog-posts', JSON.stringify(posts));
-    }
-
-    // Renderiza todos los posts (filtrando por búsqueda)
-    function renderPosts(filter = '') {
-      postsContainer.innerHTML = '';
-
-      const filterLower = filter.toLowerCase();
-
-      const filteredPosts = posts.filter(post =>
-        post.title.toLowerCase().includes(filterLower) ||
-        post.content.toLowerCase().includes(filterLower)
-      );
-
-      filteredPosts.forEach((post, idx) => {
-        const postElement = renderPost(post, posts.indexOf(post));
-        postsContainer.appendChild(postElement);
-      });
-
-      counter.textContent = `${filteredPosts.length} publicación${filteredPosts.length !== 1 ? 'es' : ''}`;
-    }
-
-    // Guardar y renderizar (con filtro actual)
-    function saveAndRender() {
-      savePosts();
-      renderPosts(searchInput.value);
-    }
-
-    // Evento submit para agregar post
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-
-      const title = form.title.value.trim();
-      const content = form.content.value.trim();
-
-      if(!title || !content) {
-        alert('Por favor completa título y contenido.');
-        return;
-      }
-
-      // Validación simple adicional
-      if(title.length > 100 || content.length > 2000) {
-        alert('Límites excedidos: título máximo 100 caracteres, contenido máximo 2000.');
-        return;
-      }
-
-      posts.push({
-        title,
-        content,
-        date: new Date().toISOString()
-      });
-
-      saveAndRender();
-      form.reset();
-      form.title.focus();
-    });
-
-    // Filtrado de posts con buscador
-    searchInput.addEventListener('input', e => {
-      renderPosts(e.target.value);
-    });
-
-    // Cargar posts al inicio
-    renderPosts();
-  </script>
+  <footer>
+    Página creada por anonimo | Estudiante de Ciberseguridad
+  </footer>
 </body>
 </html>
