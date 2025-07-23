@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Estudio Ciberseguridad - Página Informativa</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     * {
       margin: 0;
@@ -117,6 +117,35 @@
       background-color: #0a0a0a;
       width: 100%;
     }
+
+    /* Estilos para la sección status */
+    section.status {
+      max-width: 300px;
+      margin: 0 auto 50px auto;
+      text-align: center;
+      background-color: #162016;
+      box-shadow: 0 0 15px #00ff9977;
+      padding: 20px 30px;
+      border-radius: 12px;
+    }
+    section.status button.available {
+      background-color: #00ff99;
+      color: #121212;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 0 12px #00ff99;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    section.status button.available:hover {
+      background-color: #00cc77;
+      box-shadow: 0 0 18px #00cc77;
+      color: #f0f0f0;
+    }
+
     @media (max-width: 600px) {
       header h1 {
         font-size: 2rem;
@@ -127,18 +156,26 @@
       section p, section ul {
         font-size: 1rem;
       }
+      section.status {
+        max-width: 90%;
+        padding: 15px 20px;
+      }
+      section.status button.available {
+        width: 100%;
+        padding: 12px 0;
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
 <body>
-
   <!-- LOGO con link -->
   <header>
     <a href="https://tusitio.com" target="_blank" rel="noopener noreferrer">
       <img src="logo.png" alt="Logo de Ciberseguridad" />
     </a>
     <h1>Hola, soy Anónimo</h1>
-    <p>Estudiante de Ciberseguridad apasionado por proteger el mundo digital</p>
+    <p>Estudiante de analista de sistema/ciberseguridad apasionado por proteger el mundo digital</p>
   </header>
 
   <!-- Navegación interna -->
@@ -149,6 +186,11 @@
     <a href="#riesgos">Amenazas</a>
     <a href="#recursos">Recursos</a>
   </nav>
+
+  <!-- Nueva sección status -->
+  <section class="status">
+    <button class="available">Disponible para trabajar</button>
+  </section>
 
   <main>
     <section id="que-es">
@@ -203,7 +245,7 @@
   </main>
 
   <footer>
-    &copy; 2025 Anónimo - Estudiante de Ciberseguridad | Contacto: <a href="midiscord">anonimo@ejemplo.com</a>
+    &copy; 2025 Anónimo - Estudiante de analista de sistemas | Contacto: <a href="midiscord">anonimo@ejemplo.com</a>
   </footer>
 </body>
 </html>
