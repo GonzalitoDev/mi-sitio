@@ -4,12 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Estudio Ciberseguridad - Página Informativa</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
-    /* Reset básico */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+    }
+    html {
+      scroll-behavior: smooth;
     }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,33 +20,62 @@
       color: #e0e0e0;
       line-height: 1.6;
       min-height: 100vh;
+      padding: 0;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 30px 20px;
     }
     header {
-      max-width: 900px;
       width: 100%;
+      background: #1f1f1f;
+      padding: 30px 20px;
+      box-shadow: 0 4px 10px #00ff9960;
       text-align: center;
-      margin-bottom: 40px;
+      position: relative;
+    }
+    header img {
+      width: 80px;
+      height: auto;
+      margin-bottom: 10px;
     }
     header h1 {
       font-size: 2.8rem;
       color: #00ff99;
       text-shadow: 0 0 6px #00ff99;
-      margin-bottom: 10px;
     }
     header p {
       font-size: 1.2rem;
       color: #66ffbb;
     }
+    nav {
+      width: 100%;
+      background-color: #0e0e0e;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 15px 0;
+      box-shadow: 0 4px 8px #00ff9966 inset;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+    nav a {
+      color: #00ff99;
+      font-weight: bold;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #00cc77;
+      text-decoration: underline;
+    }
     main {
       max-width: 900px;
       width: 100%;
+      padding: 30px 20px;
     }
     section {
-      margin-bottom: 40px;
+      margin-bottom: 50px;
       background-color: #1e1e1e;
       padding: 25px 30px;
       border-radius: 12px;
@@ -52,9 +84,9 @@
     section h2 {
       color: #00ff99;
       margin-bottom: 20px;
-      font-size: 1.9rem;
+      font-size: 2rem;
       border-bottom: 2px solid #00ff99;
-      padding-bottom: 6px;
+      padding-bottom: 8px;
     }
     section p, section ul {
       font-size: 1.1rem;
@@ -78,23 +110,16 @@
     }
     footer {
       margin-top: auto;
-      padding: 20px 0;
+      padding: 20px;
       text-align: center;
       font-size: 0.9rem;
-      color: #555;
+      color: #888;
+      background-color: #0a0a0a;
       width: 100%;
-      max-width: 900px;
     }
-    /* Responsive */
     @media (max-width: 600px) {
-      body {
-        padding: 20px 10px;
-      }
       header h1 {
         font-size: 2rem;
-      }
-      section {
-        padding: 20px 15px;
       }
       section h2 {
         font-size: 1.5rem;
@@ -106,54 +131,79 @@
   </style>
 </head>
 <body>
+
+  <!-- LOGO con link -->
   <header>
-    <h1>Hola, soy [anonimo]</h1>
+    <a href="https://tusitio.com" target="_blank" rel="noopener noreferrer">
+      <img src="logo.png" alt="Logo de Ciberseguridad" />
+    </a>
+    <h1>Hola, soy Anónimo</h1>
     <p>Estudiante de Ciberseguridad apasionado por proteger el mundo digital</p>
   </header>
+
+  <!-- Navegación interna -->
+  <nav>
+    <a href="#que-es">¿Qué es?</a>
+    <a href="#beneficios">Beneficios</a>
+    <a href="#areas">Áreas</a>
+    <a href="#riesgos">Amenazas</a>
+    <a href="#recursos">Recursos</a>
+  </nav>
 
   <main>
     <section id="que-es">
       <h2>¿Qué es la Ciberseguridad?</h2>
       <p>
-        La ciberseguridad es la práctica de proteger sistemas, redes y programas de ataques digitales. Estos ataques suelen tener como objetivo acceder, modificar o destruir información sensible, extorsionar a los usuarios o interrumpir procesos comerciales normales.
+        Es la disciplina encargada de proteger los sistemas informáticos, redes, dispositivos y datos frente a accesos no autorizados, robos o daños. La ciberseguridad abarca desde antivirus y firewalls hasta prácticas de concienciación humana.
       </p>
     </section>
 
     <section id="beneficios">
       <h2>Beneficios de estudiar Ciberseguridad</h2>
       <ul>
-        <li>Alta demanda laboral en todo el mundo.</li>
-        <li>Oportunidad de trabajar en empresas de tecnología, finanzas, gobierno y más.</li>
-        <li>Contribuir a la protección de datos y la privacidad de las personas.</li>
-        <li>Salarios competitivos y posibilidades de crecimiento profesional.</li>
+        <li>Alta demanda laboral internacional.</li>
+        <li>Impacto directo en la seguridad de personas y organizaciones.</li>
+        <li>Salarios competitivos y crecimiento profesional.</li>
+        <li>Trabajo en entornos públicos, privados o de investigación.</li>
       </ul>
     </section>
 
     <section id="areas">
-      <h2>Áreas de estudio</h2>
+      <h2>Áreas de estudio en Ciberseguridad</h2>
       <ul>
-        <li>Seguridad de redes y sistemas.</li>
-        <li>Análisis y respuesta ante incidentes.</li>
+        <li>Seguridad en redes y sistemas operativos.</li>
+        <li>Análisis forense digital.</li>
         <li>Criptografía y protección de datos.</li>
-        <li>Auditoría y cumplimiento normativo.</li>
-        <li>Ingeniería social y concienciación.</li>
+        <li>Hacking ético y pruebas de penetración.</li>
+        <li>Resiliencia y respuesta ante incidentes.</li>
+      </ul>
+    </section>
+
+    <section id="riesgos">
+      <h2>Amenazas comunes</h2>
+      <ul>
+        <li>Phishing (correos engañosos para robar datos).</li>
+        <li>Malware (virus, troyanos, ransomware).</li>
+        <li>Fugas de datos personales y contraseñas.</li>
+        <li>Ataques de denegación de servicio (DDoS).</li>
+        <li>Ingeniería social.</li>
       </ul>
     </section>
 
     <section id="recursos">
-      <h2>Recursos recomendados</h2>
-      <p>Para profundizar en ciberseguridad, puedes consultar:</p>
+      <h2>Recursos gratuitos para aprender</h2>
       <ul>
-        <li><a href="https://www.coursera.org/specializations/cyber-security" target="_blank" rel="noopener">Especialización en Ciberseguridad - Coursera</a></li>
-        <li><a href="https://www.cybrary.it" target="_blank" rel="noopener">Cybrary - Cursos gratuitos y de pago</a></li>
-        <li><a href="https://www.khanacademy.org/computing/computer-science" target="_blank" rel="noopener">Khan Academy - Ciencias de la Computación</a></li>
-        <li><a href="https://www.owasp.org" target="_blank" rel="noopener">OWASP - Proyecto de seguridad web</a></li>
+        <li><a href="https://tryhackme.com" target="_blank">TryHackMe - Laboratorios prácticos</a></li>
+        <li><a href="https://www.hackthebox.com" target="_blank">Hack The Box - Retos de hacking ético</a></li>
+        <li><a href="https://owasp.org" target="_blank">OWASP - Seguridad en aplicaciones web</a></li>
+        <li><a href="https://www.cybrary.it" target="_blank">Cybrary - Cursos especializados</a></li>
+        <li><a href="https://portswigger.net/web-security" target="_blank">PortSwigger Academy - Web Security</a></li>
       </ul>
     </section>
   </main>
 
   <footer>
-    Página creada por anonimo | Estudiante de Ciberseguridad
+    &copy; 2025 Anónimo - Estudiante de Ciberseguridad | Contacto: <a href="midiscord">anonimo@ejemplo.com</a>
   </footer>
 </body>
 </html>
