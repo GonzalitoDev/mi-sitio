@@ -76,13 +76,15 @@
       background-color: #fafafa;
       color: #111;
     }
-    button, input, textarea {
+    button, input, textarea, select {
       padding: 10px;
       margin: 5px 0;
       border-radius: 6px;
       border: none;
       font-size: 1em;
       font-family: inherit;
+      width: 100%;
+      box-sizing: border-box;
     }
     button {
       background-color: #00fff0;
@@ -94,18 +96,6 @@
     button:hover {
       background-color: #00cacc;
     }
-    input[type="password"],
-    input[type="text"],
-    textarea,
-    select {
-      width: 100%;
-      box-sizing: border-box;
-      resize: vertical;
-      border: 1.5px solid #444;
-      background-color: #222;
-      color: #eee;
-      transition: border-color 0.3s, background-color 0.3s;
-    }
     input[type="password"]:focus,
     input[type="text"]:focus,
     textarea:focus,
@@ -114,22 +104,34 @@
       border-color: #00fff0;
       background-color: #111;
     }
-    .admin-panel, #login-form {
+    .admin-panel, #login-form, #register-form, #user-login-form {
       border-top: 2px dashed #00fff0;
       padding-top: 20px;
       margin-top: 40px;
       display: none;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
     }
-    .spam-warning {
-      color: #ff4d4d;
+    .spam-warning, .error-msg, .success-msg {
       font-size: 0.9em;
       margin-top: 5px;
       font-weight: 600;
+      text-align: center;
+    }
+    .spam-warning {
+      color: #ff4d4d;
+    }
+    .error-msg {
+      color: #ff4d4d;
+    }
+    .success-msg {
+      color: #4CAF50;
     }
     #toggle-mode {
       position: absolute;
       top: 15px;
-      right: 60px;
+      right: 90px;
       background: none;
       border: none;
       color: #00fff0;
@@ -172,6 +174,25 @@
     button.delete-post:hover {
       background-color: #cc0000;
     }
+    #user-info {
+      margin-top: 10px;
+      text-align: center;
+      font-weight: 600;
+    }
+    #logout-btn {
+      margin-top: 5px;
+      cursor: pointer;
+      background-color: #ff4d4d;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 5px;
+      font-weight: 600;
+      border: none;
+      transition: background-color 0.3s;
+    }
+    #logout-btn:hover {
+      background-color: #cc0000;
+    }
   </style>
 </head>
 <body>
@@ -191,17 +212,42 @@
   </header>
 
   <main class="container">
-    <section id="posts">
+    <div id="user-info" style="display:none;">
+      Usuario: <span id="user-name"></span>
+      <button id="logout-btn" title="Cerrar sesión">Salir</button>
+    </div>
+
+    <section id="posts" style="display:none;">
       <!-- Posts o noticias se cargarán aquí -->
     </section>
 
+    <!-- Registro usuario -->
+    <section id="register-form">
+      <h3>📝 Registro de Usuario</h3>
+      <input type="text" id="reg-username" placeholder="Nombre de usuario" autocomplete="off" />
+      <input type="password" id="reg-password" placeholder="Contraseña" autocomplete="new-password" />
+      <button onclick="register()">Registrarse</button>
+      <p id="register-msg" class="error-msg"></p>
+    </section>
+
+    <!-- Login usuario -->
+    <section id="user-login-form">
+      <h3>🔐 Iniciar Sesión</h3>
+      <input type="text" id="login-username" placeholder="Nombre de usuario" autocomplete="off" />
+      <input type="password" id="login-password" placeholder="Contraseña" autocomplete="current-password" />
+      <button onclick="userLogin()">Entrar</button>
+      <p id="login-user-msg" class="error-msg"></p>
+    </section>
+
+    <!-- Login admin -->
     <section id="login-form">
       <h3>🔐 Acceso de Administrador</h3>
       <input type="password" id="admin-pass" placeholder="Contraseña de admin" autocomplete="off" />
-      <button onclick="login()">Ingresar</button>
-      <p id="login-msg" style="color: #ff4d4d; font-weight: 600;"></p>
+      <button onclick="loginAdmin()">Ingresar</button>
+      <p id="login-msg" class="error-msg"></p>
     </section>
 
+    <!-- Panel admin -->
     <section class="admin-panel" id="admin-panel">
       <h3>🛠 Panel de Administración</h3>
       <select id="post-type">
@@ -223,6 +269,7 @@
     const ADMIN_PASSWORD = "Cyb3rLog!2025#";
     const discordWebhook = "https://discord.com/api/webhooks/ID/WEBHOOK"; // Cambia esta URL por tu webhook real
 
+    // DOM elements
     const postsContainer = document.getElementById("posts");
     const adminPanel = document.getElementById("admin-panel");
     const loginForm = document.getElementById("login-form");
@@ -234,69 +281,107 @@
     const tabPosts = document.getElementById("tab-posts");
     const tabNews = document.getElementById("tab-news");
 
+    const registerForm = document.getElementById("register-form");
+    const loginUserForm = document.getElementById("user-login-form");
+    const registerMsg = document.getElementById("register-msg");
+    const loginUserMsg = document.getElementById("login-user-msg");
+
+    const userInfo = document.getElementById("user-info");
+    const userNameSpan = document.getElementById("user-name");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // Variables
     let isAdmin = false;
     let lastPostTime = 0;
     let posts = [];
     let news = [];
     let currentTab = 'post'; // 'post' o 'news'
 
-    // Carga posts y noticias de localStorage
-    function loadData() {
-      const savedPosts = localStorage.getItem("cyberlog-posts");
-      const savedNews = localStorage.getItem("cyberlog-news");
-      posts = savedPosts ? JSON.parse(savedPosts) : [];
-      news = savedNews ? JSON.parse(savedNews) : [];
+    // Usuario actual logueado
+    let currentUser = null;
+
+    // --- Funciones de usuario ---
+
+    // Guarda usuarios en localStorage (objeto {username: password})
+    function saveUsers(users) {
+      localStorage.setItem("cyberlog-users", JSON.stringify(users));
+    }
+    // Obtiene usuarios guardados
+    function loadUsers() {
+      const u = localStorage.getItem("cyberlog-users");
+      return u ? JSON.parse(u) : {};
     }
 
-    // Guarda posts y noticias en localStorage
-    function saveData() {
-      localStorage.setItem("cyberlog-posts", JSON.stringify(posts));
-      localStorage.setItem("cyberlog-news", JSON.stringify(news));
-    }
+    // Registro de usuario nuevo
+    function register() {
+      const username = document.getElementById("reg-username").value.trim();
+      const password = document.getElementById("reg-password").value;
 
-    // Escapa HTML para evitar inyección
-    function escapeHtml(text) {
-      return text.replace(/[&<>"']/g, function(m) {
-        return {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
-        }[m];
-      });
-    }
-
-    // Renderiza la lista según la pestaña activa
-    function render() {
-      postsContainer.innerHTML = "";
-      let list = currentTab === 'post' ? posts : news;
-
-      if(list.length === 0){
-        postsContainer.innerHTML = `<p>No hay ${currentTab === 'post' ? 'publicaciones' : 'noticias'} aún.</p>`;
+      registerMsg.textContent = "";
+      if(!username || !password){
+        registerMsg.textContent = "⚠️ Completa usuario y contraseña.";
         return;
       }
 
-      list.forEach((item, index) => {
-        const entry = document.createElement("section");
-        entry.className = "blog-entry";
-        entry.innerHTML = `
-          <h3>${escapeHtml(item.title)}</h3>
-          <p>${escapeHtml(item.content).replace(/\n/g, "<br>")}</p>
-          ${isAdmin ? `<button class="delete-post" onclick="deleteItem(${index})" title="Eliminar ${currentTab === 'post' ? 'publicación' : 'noticia'}">🗑️</button>` : ""}
-        `;
-        postsContainer.appendChild(entry);
-      });
+      let users = loadUsers();
+      if(users[username]){
+        registerMsg.textContent = "⚠️ Usuario ya existe.";
+        return;
+      }
+
+      users[username] = password;
+      saveUsers(users);
+      registerMsg.textContent = "✅ Registro exitoso, ahora inicia sesión.";
+      document.getElementById("reg-username").value = "";
+      document.getElementById("reg-password").value = "";
+      showLoginForm();
     }
 
-    // Login de administrador
-    function login() {
+    // Login de usuario normal
+    function userLogin() {
+      const username = document.getElementById("login-username").value.trim();
+      const password = document.getElementById("login-password").value;
+
+      loginUserMsg.textContent = "";
+      if(!username || !password){
+        loginUserMsg.textContent = "⚠️ Completa usuario y contraseña.";
+        return;
+      }
+
+      let users = loadUsers();
+      if(users[username] && users[username] === password){
+        currentUser = username;
+        loginUserMsg.textContent = "";
+        showContentForUser();
+      } else {
+        loginUserMsg.textContent = "❌ Usuario o contraseña incorrectos.";
+      }
+    }
+
+    // Logout usuario
+    logoutBtn.onclick = () => {
+      currentUser = null;
+      showLoginRegister();
+      hideContent();
+      isAdmin = false;
+      adminPanel.style.display = "none";
+      loginForm.style.display = "none";
+      btnAdminToggle.style.display = "inline-block";
+    };
+
+    // --- Funciones admin ---
+
+    // Login admin
+    function loginAdmin() {
       const pass = document.getElementById("admin-pass").value;
+      loginMsg.textContent = "";
       if(pass === ADMIN_PASSWORD){
         isAdmin = true;
         adminPanel.style.display = "block";
         loginForm.style.display = "none";
-        loginMsg.textContent = "";
+        registerForm.style.display = "none";
+        loginUserForm.style.display = "none";
+        btnAdminToggle.style.display = "none";
         render();
       } else {
         loginMsg.textContent = "❌ Contraseña incorrecta";
@@ -364,20 +449,86 @@
       }).catch(() => console.warn("No se pudo enviar log a Discord."));
     }
 
-    // Cambio de pestañas
-    tabPosts.addEventListener("click", () => {
-      currentTab = 'post';
-      tabPosts.classList.add("active");
-      tabNews.classList.remove("active");
-      render();
-    });
+    // --- Utilidades ---
 
-    tabNews.addEventListener("click", () => {
-      currentTab = 'news';
-      tabNews.classList.add("active");
-      tabPosts.classList.remove("active");
+    // Guardar posts y noticias
+    function saveData(){
+      localStorage.setItem("cyberlog-posts", JSON.stringify(posts));
+      localStorage.setItem("cyberlog-news", JSON.stringify(news));
+    }
+
+    // Cargar posts y noticias
+    function loadData(){
+      const savedPosts = localStorage.getItem("cyberlog-posts");
+      const savedNews = localStorage.getItem("cyberlog-news");
+      posts = savedPosts ? JSON.parse(savedPosts) : [];
+      news = savedNews ? JSON.parse(savedNews) : [];
+    }
+
+    // Escapar HTML para evitar inyección
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[m];
+      });
+    }
+
+    // Renderiza posts o noticias según pestaña y si usuario está logueado
+    function render(){
+      if(!currentUser && !isAdmin){
+        postsContainer.style.display = "none";
+        return;
+      }
+      postsContainer.style.display = "block";
+
+      const list = currentTab === 'post' ? posts : news;
+      postsContainer.innerHTML = "";
+
+      if(list.length === 0){
+        postsContainer.innerHTML = "<p>No hay publicaciones aún.</p>";
+        return;
+      }
+
+      list.forEach((item, index) => {
+        const entry = document.createElement("section");
+        entry.className = "blog-entry";
+        entry.innerHTML = `
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.content).replace(/\n/g, "<br>")}</p>
+          ${isAdmin ? `<button class="delete-post" onclick="deleteItem(${index})" title="Eliminar publicación">🗑️</button>` : ""}
+        `;
+        postsContainer.appendChild(entry);
+      });
+    }
+
+    // Muestra formulario de login y registro usuario
+    function showLoginRegister(){
+      registerForm.style.display = "block";
+      loginUserForm.style.display = "block";
+      loginForm.style.display = "none";
+      adminPanel.style.display = "none";
+      postsContainer.style.display = "none";
+      userInfo.style.display = "none";
+      btnAdminToggle.style.display = "inline-block";
+    }
+
+    // Muestra contenido para usuario logueado
+    function showContentForUser(){
+      registerForm.style.display = "none";
+      loginUserForm.style.display = "none";
+      loginForm.style.display = "none";
+      adminPanel.style.display = "none";
+      postsContainer.style.display = "block";
+      userInfo.style.display = "block";
+      userNameSpan.textContent = currentUser;
+      btnAdminToggle.style.display = "inline-block";
       render();
-    });
+    }
 
     // Toggle modo oscuro/claro
     toggleModeBtn.addEventListener("click", () => {
@@ -397,6 +548,8 @@
         } else {
           loginForm.style.display = "block";
           adminPanel.style.display = "none";
+          registerForm.style.display = "none";
+          loginUserForm.style.display = "none";
           loginMsg.textContent = "";
         }
       } else {
@@ -405,13 +558,30 @@
         } else {
           adminPanel.style.display = "block";
           loginForm.style.display = "none";
+          registerForm.style.display = "none";
+          loginUserForm.style.display = "none";
         }
       }
     });
 
+    // Cambiar pestañas Publicaciones / Noticias
+    tabPosts.addEventListener("click", () => {
+      currentTab = 'post';
+      tabPosts.classList.add("active");
+      tabNews.classList.remove("active");
+      render();
+    });
+
+    tabNews.addEventListener("click", () => {
+      currentTab = 'news';
+      tabNews.classList.add("active");
+      tabPosts.classList.remove("active");
+      render();
+    });
+
     // Inicialización
     loadData();
-    render();
+    showLoginRegister();
 
     // Recarga periódica para que usuarios vean nuevos posts sin recargar página
     setInterval(() => {
