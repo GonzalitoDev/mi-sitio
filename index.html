@@ -45,9 +45,15 @@
       text-decoration: none;
       font-weight: 600;
       font-size: 1.05em;
+      cursor: pointer;
     }
     nav a:hover {
       text-decoration: underline;
+    }
+    nav a.active {
+      text-decoration: underline;
+      font-weight: 700;
+      color: #00fff0;
     }
     .container {
       max-width: 800px;
@@ -63,6 +69,7 @@
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
       transition: background-color 0.3s, border-color 0.3s;
       word-break: break-word;
+      position: relative;
     }
     .light-mode .blog-entry {
       border-color: #aaa;
@@ -89,7 +96,8 @@
     }
     input[type="password"],
     input[type="text"],
-    textarea {
+    textarea,
+    select {
       width: 100%;
       box-sizing: border-box;
       resize: vertical;
@@ -100,7 +108,8 @@
     }
     input[type="password"]:focus,
     input[type="text"]:focus,
-    textarea:focus {
+    textarea:focus,
+    select:focus {
       outline: none;
       border-color: #00fff0;
       background-color: #111;
@@ -154,8 +163,9 @@
       border-radius: 5px;
       padding: 5px 10px;
       font-size: 0.9em;
-      float: right;
-      margin-top: -35px;
+      position: absolute;
+      top: 10px;
+      right: 10px;
       cursor: pointer;
       transition: background-color 0.3s;
     }
@@ -174,16 +184,15 @@
     <button id="btn-admin-toggle" title="Mostrar/Ocultar panel admin">🔑</button>
     <nav>
       <ul>
-        <li><a href="#">Artículos</a></li>
-        <li><a href="#">Proyectos</a></li>
-        <li><a href="#">Contacto</a></li>
+        <li><a id="tab-posts" class="active">Publicaciones</a></li>
+        <li><a id="tab-news">Noticias</a></li>
       </ul>
     </nav>
   </header>
 
   <main class="container">
     <section id="posts">
-      <!-- Posts se cargarán aquí -->
+      <!-- Posts o noticias se cargarán aquí -->
     </section>
 
     <section id="login-form">
@@ -195,6 +204,10 @@
 
     <section class="admin-panel" id="admin-panel">
       <h3>🛠 Panel de Administración</h3>
+      <select id="post-type">
+        <option value="post" selected>Publicación</option>
+        <option value="news">Noticia</option>
+      </select>
       <input type="text" id="new-title" placeholder="Título del post" maxlength="100" />
       <textarea id="new-content" placeholder="Contenido..." rows="6" maxlength="3000"></textarea>
       <button onclick="addPost()">📤 Publicar</button>
@@ -218,19 +231,27 @@
     const toggleModeBtn = document.getElementById("toggle-mode");
     const btnAdminToggle = document.getElementById("btn-admin-toggle");
 
+    const tabPosts = document.getElementById("tab-posts");
+    const tabNews = document.getElementById("tab-news");
+
     let isAdmin = false;
     let lastPostTime = 0;
     let posts = [];
+    let news = [];
+    let currentTab = 'post'; // 'post' o 'news'
 
-    // Carga posts de localStorage
-    function loadPosts() {
-      const saved = localStorage.getItem("cyberlog-posts");
-      posts = saved ? JSON.parse(saved) : [];
+    // Carga posts y noticias de localStorage
+    function loadData() {
+      const savedPosts = localStorage.getItem("cyberlog-posts");
+      const savedNews = localStorage.getItem("cyberlog-news");
+      posts = savedPosts ? JSON.parse(savedPosts) : [];
+      news = savedNews ? JSON.parse(savedNews) : [];
     }
 
-    // Guarda posts en localStorage
-    function savePosts() {
+    // Guarda posts y noticias en localStorage
+    function saveData() {
       localStorage.setItem("cyberlog-posts", JSON.stringify(posts));
+      localStorage.setItem("cyberlog-news", JSON.stringify(news));
     }
 
     // Escapa HTML para evitar inyección
@@ -246,20 +267,23 @@
       });
     }
 
-    // Renderiza posts en pantalla
-    function renderPosts() {
+    // Renderiza la lista según la pestaña activa
+    function render() {
       postsContainer.innerHTML = "";
-      if(posts.length === 0){
-        postsContainer.innerHTML = "<p>No hay publicaciones aún.</p>";
+      let list = currentTab === 'post' ? posts : news;
+
+      if(list.length === 0){
+        postsContainer.innerHTML = `<p>No hay ${currentTab === 'post' ? 'publicaciones' : 'noticias'} aún.</p>`;
         return;
       }
-      posts.forEach((post, index) => {
+
+      list.forEach((item, index) => {
         const entry = document.createElement("section");
         entry.className = "blog-entry";
         entry.innerHTML = `
-          <h3>${escapeHtml(post.title)}</h3>
-          <p>${escapeHtml(post.content).replace(/\n/g, "<br>")}</p>
-          ${isAdmin ? `<button class="delete-post" onclick="deletePost(${index})" title="Eliminar publicación">🗑️</button>` : ""}
+          <h3>${escapeHtml(item.title)}</h3>
+          <p>${escapeHtml(item.content).replace(/\n/g, "<br>")}</p>
+          ${isAdmin ? `<button class="delete-post" onclick="deleteItem(${index})" title="Eliminar ${currentTab === 'post' ? 'publicación' : 'noticia'}">🗑️</button>` : ""}
         `;
         postsContainer.appendChild(entry);
       });
@@ -273,14 +297,14 @@
         adminPanel.style.display = "block";
         loginForm.style.display = "none";
         loginMsg.textContent = "";
-        renderPosts();
+        render();
       } else {
         loginMsg.textContent = "❌ Contraseña incorrecta";
       }
       document.getElementById("admin-pass").value = "";
     }
 
-    // Añadir nueva publicación
+    // Añadir nueva publicación o noticia
     function addPost() {
       const now = Date.now();
       if(now - lastPostTime < 10000){
@@ -290,14 +314,20 @@
 
       const title = document.getElementById("new-title").value.trim();
       const content = document.getElementById("new-content").value.trim();
+      const type = document.getElementById("post-type").value;
       if(!title || !content){
         spamWarning.textContent = "⚠️ Completa título y contenido.";
         return;
       }
 
-      posts.unshift({title, content});
-      savePosts();
-      renderPosts();
+      if(type === 'post'){
+        posts.unshift({title, content});
+      } else {
+        news.unshift({title, content});
+      }
+
+      saveData();
+      render();
 
       document.getElementById("new-title").value = "";
       document.getElementById("new-content").value = "";
@@ -309,29 +339,45 @@
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-          content: `📢 Nuevo post publicado en CyberLog:\n**${title}**\n${content}`
+          content: `📢 Nuevo ${type === 'post' ? 'post' : 'noticia'} publicado en CyberLog:\n**${title}**\n${content}`
         })
       }).catch(() => console.warn("No se pudo enviar log a Discord."));
     }
 
-    // Eliminar publicación
-    function deletePost(index){
-      const title = posts[index].title;
-      if(!confirm(`¿Eliminar la publicación "${title}"?`)) return;
+    // Eliminar publicación o noticia
+    function deleteItem(index){
+      let list = currentTab === 'post' ? posts : news;
+      const title = list[index].title;
+      if(!confirm(`¿Eliminar la ${currentTab === 'post' ? 'publicación' : 'noticia'} "${title}"?`)) return;
 
-      posts.splice(index, 1);
-      savePosts();
-      renderPosts();
+      list.splice(index, 1);
+      saveData();
+      render();
 
       // Log en Discord
       fetch(discordWebhook, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
-          content: `🗑️ El admin eliminó la publicación: **${title}**`
+          content: `🗑️ El admin eliminó la ${currentTab === 'post' ? 'publicación' : 'noticia'}: **${title}**`
         })
       }).catch(() => console.warn("No se pudo enviar log a Discord."));
     }
+
+    // Cambio de pestañas
+    tabPosts.addEventListener("click", () => {
+      currentTab = 'post';
+      tabPosts.classList.add("active");
+      tabNews.classList.remove("active");
+      render();
+    });
+
+    tabNews.addEventListener("click", () => {
+      currentTab = 'news';
+      tabNews.classList.add("active");
+      tabPosts.classList.remove("active");
+      render();
+    });
 
     // Toggle modo oscuro/claro
     toggleModeBtn.addEventListener("click", () => {
@@ -364,14 +410,14 @@
     });
 
     // Inicialización
-    loadPosts();
-    renderPosts();
+    loadData();
+    render();
 
     // Recarga periódica para que usuarios vean nuevos posts sin recargar página
     setInterval(() => {
       if (!adminPanel.style.display || adminPanel.style.display === "none") {
-        loadPosts();
-        renderPosts();
+        loadData();
+        render();
       }
     }, 15000);
   </script>
