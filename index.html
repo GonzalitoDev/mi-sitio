@@ -1,27 +1,43 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>🛡️ Blog Ciberseguridad</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --bg-color: #0f0f0f;
+      --text-color: #f0f0f0;
+      --entry-bg: #222;
+    }
+
+    body.light {
+      --bg-color: #ffffff;
+      --text-color: #000000;
+      --entry-bg: #f2f2f2;
+    }
+
     body {
       margin: 0;
       font-family: 'Roboto', sans-serif;
-      background: #0f0f0f;
-      color: #f0f0f0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      transition: background 0.3s, color 0.3s;
     }
+
     header {
       background: #1a1a1a;
       padding: 2em;
       text-align: center;
     }
+
     h1 {
       font-family: 'Orbitron', sans-serif;
       font-size: 2.5em;
       color: #00fff0;
     }
+
     nav ul {
       list-style: none;
       padding: 0;
@@ -29,34 +45,47 @@
       justify-content: center;
       gap: 2em;
     }
+
     nav a {
       color: #00fff0;
       text-decoration: none;
       font-weight: bold;
     }
+
+    .toggle-mode {
+      margin-top: 1em;
+      cursor: pointer;
+      font-size: 0.9em;
+      color: #00fff0;
+    }
+
     section {
       padding: 2em;
       max-width: 800px;
       margin: auto;
     }
+
     .blog-entry {
-      background: #222;
+      background: var(--entry-bg);
       padding: 1.5em;
       border-radius: 10px;
       margin-bottom: 2em;
       box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
     }
+
     form {
       display: flex;
       flex-direction: column;
       gap: 1em;
     }
+
     input, textarea {
       padding: 0.7em;
       border: none;
       border-radius: 5px;
       font-size: 1em;
     }
+
     input[type="submit"] {
       background: #00fff0;
       color: black;
@@ -64,12 +93,41 @@
       cursor: pointer;
       transition: background 0.3s;
     }
+
     input[type="submit"]:hover {
       background: #00cccc;
     }
+
     .status {
       margin-top: 1em;
       font-weight: bold;
+    }
+
+    #contador {
+      font-size: 0.8em;
+      color: #aaa;
+      text-align: right;
+    }
+
+    #scrollTopBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #00fff0;
+      color: black;
+      border: none;
+      padding: 0.7em 1em;
+      border-radius: 10px;
+      cursor: pointer;
+      display: none;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1em;
+      font-size: 0.9em;
+      color: #888;
     }
   </style>
 </head>
@@ -85,11 +143,13 @@
         <li><a href="#contacto">Contacto</a></li>
       </ul>
     </nav>
+    <div class="toggle-mode" onclick="toggleMode()">🌗 Cambiar modo</div>
   </header>
 
   <section id="inicio" class="blog-entry">
     <h2>📢 Bienvenido</h2>
     <p>En este blog comparto mis aprendizajes sobre ciberseguridad, hacking ético y defensa digital. Ideal para principiantes.</p>
+    <p>🗓️ Fecha de hoy: <span id="fechaActual"></span></p>
   </section>
 
   <section id="blog" class="blog-entry">
@@ -107,28 +167,66 @@
       <input type="email" id="email" name="email" required>
 
       <label for="mensaje">💬 Tu mensaje:</label>
-      <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
+      <textarea id="mensaje" name="mensaje" rows="5" maxlength="300" required></textarea>
+      <div id="contador">0 / 300</div>
 
       <input type="submit" value="Enviar">
       <p class="status" id="status"></p>
     </form>
   </section>
 
+  <footer>
+    &copy; 2025 Blog Ciberseguridad · Hecho con 💻 por ti
+  </footer>
+
+  <button id="scrollTopBtn" onclick="scrollToTop()">⬆️ Subir</button>
+
   <script>
+    // Fecha actual
+    document.getElementById("fechaActual").textContent = new Date().toLocaleDateString();
+
+    // Modo claro/oscuro
+    function toggleMode() {
+      document.body.classList.toggle('light');
+    }
+
+    // Botón subir
+    window.onscroll = function() {
+      const btn = document.getElementById("scrollTopBtn");
+      btn.style.display = window.scrollY > 200 ? "block" : "none";
+    };
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Contador de caracteres
+    const mensajeInput = document.getElementById('mensaje');
+    const contador = document.getElementById('contador');
+    mensajeInput.addEventListener('input', () => {
+      contador.textContent = `${mensajeInput.value.length} / 300`;
+    });
+
+    // Envío a Discord
     const form = document.getElementById('formulario-contacto');
     const status = document.getElementById('status');
 
-    const webhookURL = 'https://discord.com/api/webhooks/1397473256054722632/MbP9R4LofvTift9RwXDffGDOUmTPfKJXrqLkseC7gPO4llNhTxecHSc1ces01zY5mhYh'; // <-- reemplaza por tu webhook
+    const webhookURL = 'https://discord.com/api/webhooks/1397473256054722632/MbP9R4LofvTift9RwXDffGDOUmTPfKJXrqLkseC7gPO4llNhTxecHSc1ces01zY5mhYh'; // <-- REEMPLAZA AQUÍ
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const nombre = document.getElementById('nombre').value;
-      const email = document.getElementById('email').value;
-      const mensaje = document.getElementById('mensaje').value;
+      const nombre = document.getElementById('nombre').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const mensaje = mensajeInput.value.trim();
+
+      if (!nombre || !email || !mensaje) {
+        status.textContent = '❗ Todos los campos son obligatorios.';
+        return;
+      }
 
       const payload = {
-        content: `📥 **Nuevo mensaje del blog:**\n👤 Nombre: ${nombre}\n📧 Email: ${email}\n💬 Mensaje: ${mensaje}`
+        content: `📥 **Nuevo mensaje desde el blog:**\n👤 Nombre: ${nombre}\n📧 Email: ${email}\n💬 Mensaje: ${mensaje}`
       };
 
       try {
@@ -139,13 +237,14 @@
         });
 
         if (res.ok) {
-          status.textContent = '✅ Mensaje enviado correctamente.';
+          status.textContent = '✅ ¡Mensaje enviado correctamente!';
           form.reset();
+          contador.textContent = '0 / 300';
         } else {
-          status.textContent = '❌ Error al enviar el mensaje.';
+          status.textContent = '❌ Error al enviar.';
         }
       } catch (err) {
-        status.textContent = '⚠️ Fallo de red o webhook.';
+        status.textContent = '⚠️ No se pudo conectar al webhook.';
       }
     });
   </script>
