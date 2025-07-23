@@ -366,6 +366,14 @@
     // Inicialización
     loadPosts();
     renderPosts();
+
+    // Recarga periódica para que usuarios vean nuevos posts sin recargar página
+    setInterval(() => {
+      if (!adminPanel.style.display || adminPanel.style.display === "none") {
+        loadPosts();
+        renderPosts();
+      }
+    }, 15000);
   </script>
 </body>
 </html>
