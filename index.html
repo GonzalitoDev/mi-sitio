@@ -1,253 +1,160 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>🛡️ Blog Ciberseguridad</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberLog - Blog de Ciberseguridad</title>
   <style>
-    :root {
-      --bg-color: #0f0f0f;
-      --text-color: #f0f0f0;
-      --entry-bg: #222;
-    }
-
-    body.light {
-      --bg-color: #ffffff;
-      --text-color: #000000;
-      --entry-bg: #f2f2f2;
-    }
-
     body {
-      margin: 0;
       font-family: 'Roboto', sans-serif;
-      background: var(--bg-color);
-      color: var(--text-color);
-      transition: background 0.3s, color 0.3s;
+      margin: 0;
+      background: #0f0f0f;
+      color: #e0e0e0;
     }
-
     header {
-      background: #1a1a1a;
-      padding: 2em;
+      background: #121212;
+      padding: 20px;
       text-align: center;
+      border-bottom: 3px solid #00ffd5;
     }
-
-    h1 {
+    header h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.5em;
-      color: #00fff0;
+      color: #00ffd5;
     }
-
     nav ul {
       list-style: none;
       padding: 0;
-      display: flex;
-      justify-content: center;
-      gap: 2em;
     }
-
-    nav a {
-      color: #00fff0;
+    nav ul li {
+      display: inline-block;
+      margin: 10px;
+    }
+    nav ul li a {
+      color: #00ffd5;
       text-decoration: none;
-      font-weight: bold;
     }
-
-    .toggle-mode {
-      margin-top: 1em;
-      cursor: pointer;
-      font-size: 0.9em;
-      color: #00fff0;
-    }
-
-    section {
-      padding: 2em;
-      max-width: 800px;
+    .container {
+      max-width: 900px;
       margin: auto;
+      padding: 20px;
     }
-
     .blog-entry {
-      background: var(--entry-bg);
-      padding: 1.5em;
-      border-radius: 10px;
-      margin-bottom: 2em;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+      background: #1a1a1a;
+      margin-bottom: 20px;
+      padding: 15px;
+      border-left: 5px solid #00ffd5;
     }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1em;
-    }
-
-    input, textarea {
-      padding: 0.7em;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-    }
-
-    input[type="submit"] {
-      background: #00fff0;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    input[type="submit"]:hover {
-      background: #00cccc;
-    }
-
-    .status {
-      margin-top: 1em;
-      font-weight: bold;
-    }
-
-    #contador {
-      font-size: 0.8em;
-      color: #aaa;
-      text-align: right;
-    }
-
-    #scrollTopBtn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #00fff0;
-      color: black;
-      border: none;
-      padding: 0.7em 1em;
-      border-radius: 10px;
-      cursor: pointer;
-      display: none;
-      font-weight: bold;
-    }
-
     footer {
       text-align: center;
-      padding: 1em;
-      font-size: 0.9em;
-      color: #888;
+      padding: 20px;
+      background: #121212;
+      color: #777;
+    }
+    form {
+      margin-top: 30px;
+      background: #1f1f1f;
+      padding: 20px;
+      border: 2px solid #00ffd5;
+    }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      background: #2b2b2b;
+      color: white;
+      border: 1px solid #00ffd5;
+    }
+    button:hover {
+      background: #00ffd5;
+      color: black;
+      cursor: pointer;
     }
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
-
   <header>
-    <h1>🔐 Blog de Ciberseguridad</h1>
-    <p>💻 Aprendiendo a proteger lo que otros no ven</p>
+    <h1>🛡️ CyberLog</h1>
+    <h2>🔐 Explorando la Seguridad Informática</h2>
+    <p>🧠 Observa, analiza, protege.</p>
     <nav>
       <ul>
-        <li><a href="#inicio">Inicio</a></li>
-        <li><a href="#blog">Blog</a></li>
-        <li><a href="#contacto">Contacto</a></li>
+        <li><a href="#">Inicio</a></li>
+        <li><a href="#">Artículos</a></li>
+        <li><a href="#">Proyectos</a></li>
+        <li><a href="#">Contacto</a></li>
       </ul>
     </nav>
-    <div class="toggle-mode" onclick="toggleMode()">🌗 Cambiar modo</div>
   </header>
 
-  <section id="inicio" class="blog-entry">
-    <h2>📢 Bienvenido</h2>
-    <p>En este blog comparto mis aprendizajes sobre ciberseguridad, hacking ético y defensa digital. Ideal para principiantes.</p>
-    <p>🗓️ Fecha de hoy: <span id="fechaActual"></span></p>
-  </section>
+  <main class="container" id="contenido">
+    <section class="blog-entry">
+      <h3>🔍 Cómo detectar vulnerabilidades básicas</h3>
+      <p>Herramientas como Nmap, Wireshark y Nikto son esenciales para detectar problemas comunes en redes.</p>
+      <a href="#">Leer más</a>
+    </section>
 
-  <section id="blog" class="blog-entry">
-    <h2>📝 Última entrada</h2>
-    <p><strong>¿Qué es un firewall?</strong><br>Un firewall es un sistema que controla el tráfico de red y protege los dispositivos frente a accesos no autorizados.</p>
-  </section>
+    <section class="blog-entry">
+      <h3>🧰 Herramientas gratuitas para empezar en Ciberseguridad</h3>
+      <p>Incluye Kali Linux, Autopsy, Metasploit Framework, entre otros.</p>
+      <a href="#">Leer más</a>
+    </section>
 
-  <section id="contacto" class="blog-entry">
-    <h2>📬 Contacto</h2>
-    <form id="formulario-contacto">
-      <label for="nombre">🧑 Tu nombre:</label>
-      <input type="text" id="nombre" name="nombre" required>
-
-      <label for="email">📧 Tu correo:</label>
-      <input type="email" id="email" name="email" required>
-
-      <label for="mensaje">💬 Tu mensaje:</label>
-      <textarea id="mensaje" name="mensaje" rows="5" maxlength="300" required></textarea>
-      <div id="contador">0 / 300</div>
-
-      <input type="submit" value="Enviar">
-      <p class="status" id="status"></p>
+    <form id="formulario" onsubmit="return enviarFormulario();">
+      <h3>📝 Publicar nuevo artículo (admin)</h3>
+      <input type="text" id="nombre" placeholder="Tu nombre">
+      <input type="password" id="clave" placeholder="Clave de administrador">
+      <input type="text" id="titulo" placeholder="Título del artículo">
+      <textarea id="contenidoArticulo" placeholder="Contenido..."></textarea>
+      <button type="submit">Publicar</button>
     </form>
-  </section>
+  </main>
 
-  <footer>
-    &copy; 2025 Blog Ciberseguridad · Hecho con 💻 por ti
+  <footer class="container">
+    <p>&copy; 2025 CyberLog - Seguridad Informática para Todos</p>
   </footer>
 
-  <button id="scrollTopBtn" onclick="scrollToTop()">⬆️ Subir</button>
-
   <script>
-    // Fecha actual
-    document.getElementById("fechaActual").textContent = new Date().toLocaleDateString();
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1397473256054722632/MbP9R4LofvTift9RwXDffGDOUmTPfKJXrqLkseC7gPO4llNhTxecHSc1ces01zY5mhYh"; // Cambia por tu webhook de Discord
+    const CLAVE_ADMIN = "Cyb3rLog!2025#"; // Cambia por tu clave segura
 
-    // Modo claro/oscuro
-    function toggleMode() {
-      document.body.classList.toggle('light');
-    }
+    function enviarFormulario() {
+      const nombre = document.getElementById("nombre").value.trim();
+      const clave = document.getElementById("clave").value.trim();
+      const titulo = document.getElementById("titulo").value.trim();
+      const contenido = document.getElementById("contenidoArticulo").value.trim();
 
-    // Botón subir
-    window.onscroll = function() {
-      const btn = document.getElementById("scrollTopBtn");
-      btn.style.display = window.scrollY > 200 ? "block" : "none";
-    };
-
-    function scrollToTop() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // Contador de caracteres
-    const mensajeInput = document.getElementById('mensaje');
-    const contador = document.getElementById('contador');
-    mensajeInput.addEventListener('input', () => {
-      contador.textContent = `${mensajeInput.value.length} / 300`;
-    });
-
-    // Envío a Discord
-    const form = document.getElementById('formulario-contacto');
-    const status = document.getElementById('status');
-
-    const webhookURL = 'https://discord.com/api/webhooks/1397473256054722632/MbP9R4LofvTift9RwXDffGDOUmTPfKJXrqLkseC7gPO4llNhTxecHSc1ces01zY5mhYh'; // <-- REEMPLAZA AQUÍ
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const nombre = document.getElementById('nombre').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const mensaje = mensajeInput.value.trim();
-
-      if (!nombre || !email || !mensaje) {
-        status.textContent = '❗ Todos los campos son obligatorios.';
-        return;
+      if (!nombre || !titulo || !contenido) {
+        alert("Completa todos los campos.");
+        return false;
       }
 
-      const payload = {
-        content: `📥 **Nuevo mensaje desde el blog:**\n👤 Nombre: ${nombre}\n📧 Email: ${email}\n💬 Mensaje: ${mensaje}`
-      };
-
-      try {
-        const res = await fetch(webhookURL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-          status.textContent = '✅ ¡Mensaje enviado correctamente!';
-          form.reset();
-          contador.textContent = '0 / 300';
-        } else {
-          status.textContent = '❌ Error al enviar.';
-        }
-      } catch (err) {
-        status.textContent = '⚠️ No se pudo conectar al webhook.';
+      // Verifica clave
+      if (clave !== CLAVE_ADMIN) {
+        alert("Clave incorrecta. Solo el admin puede publicar.");
+        return false;
       }
-    });
+
+      // Agrega nueva entrada al DOM
+      const nuevaEntrada = document.createElement("section");
+      nuevaEntrada.className = "blog-entry";
+      nuevaEntrada.innerHTML = `<h3>📝 ${titulo}</h3><p>${contenido}</p><small>Publicado por: ${nombre}</small>`;
+      document.getElementById("contenido").insertBefore(nuevaEntrada, document.getElementById("formulario"));
+
+      // Enviar log a Discord
+      fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: `🛡️ **Nuevo artículo publicado por ${nombre}**\n📌 **Título:** ${titulo}\n📝 ${contenido}`
+        })
+      }).catch(() => console.log("No se pudo enviar al webhook."));
+
+      // Limpia formulario
+      document.getElementById("formulario").reset();
+
+      return false;
+    }
   </script>
-
 </body>
 </html>
