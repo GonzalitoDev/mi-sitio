@@ -3,18 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CyberLog - Blog de Ciberseguridad</title>
+  <title>CyberLog - Blog y Foro de Ciberseguridad</title>
   <style>
+    /* Reset y estilos base */
+    * {
+      box-sizing: border-box;
+    }
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: #121212;
       color: #fff;
       margin: 0; padding: 0;
       transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
     .light-mode {
       background-color: #f5f5f5;
-      color: #000;
+      color: #222;
     }
     header, footer {
       background: #1e1e1e;
@@ -22,11 +29,15 @@
       padding: 20px;
       text-align: center;
       position: relative;
+      flex-shrink: 0;
     }
     .light-mode header,
     .light-mode footer {
       background: #ddd;
       color: #000;
+    }
+    header h1 {
+      margin: 0 0 8px;
     }
     nav ul {
       list-style: none;
@@ -44,8 +55,9 @@
       color: inherit;
       text-decoration: none;
       font-weight: 600;
-      font-size: 1.05em;
+      font-size: 1.1em;
       cursor: pointer;
+      user-select: none;
     }
     nav a:hover {
       text-decoration: underline;
@@ -55,209 +67,437 @@
       font-weight: 700;
       color: #00fff0;
     }
-    .container {
-      max-width: 800px;
+
+    main.container {
+      max-width: 960px;
       margin: 30px auto;
       padding: 0 20px 40px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
     }
-    .blog-entry {
-      border: 1px solid #444;
-      padding: 20px;
-      margin-bottom: 25px;
-      border-radius: 10px;
+
+    /* Posts y foro */
+    #posts, #news, #forum {
+      display: none;
+    }
+
+    .post-card, .news-card {
       background-color: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 10px;
+      padding: 20px;
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.15);
       transition: background-color 0.3s, border-color 0.3s;
       word-break: break-word;
       position: relative;
     }
-    .light-mode .blog-entry {
+    .light-mode .post-card, .light-mode .news-card {
       border-color: #aaa;
       background-color: #fafafa;
       color: #111;
     }
-    button, input, textarea, select {
+    .post-card h3, .news-card h3 {
+      margin-top: 0;
+    }
+
+    /* Comentarios dentro de posts */
+    .comments {
+      margin-top: 15px;
+      border-top: 1px solid #444;
+      padding-top: 15px;
+    }
+    .comment {
+      border-bottom: 1px solid #333;
+      padding: 8px 0;
+      font-size: 0.9em;
+      color: #ccc;
+      position: relative;
+    }
+    .comment strong {
+      color: #00fff0;
+    }
+    .comment .delete-comment {
+      position: absolute;
+      right: 0;
+      top: 8px;
+      background: #ff4d4d;
+      border: none;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .comment .delete-comment:hover {
+      background: #cc0000;
+    }
+
+    /* Formulario comentarios */
+    #comment-form {
+      margin-top: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #comment-form textarea {
+      resize: vertical;
+      min-height: 60px;
+      font-family: inherit;
+      font-size: 1em;
       padding: 10px;
-      margin: 5px 0;
       border-radius: 6px;
       border: none;
-      font-size: 1em;
-      font-family: inherit;
-      width: 100%;
-      box-sizing: border-box;
+      background-color: #222;
+      color: #eee;
+      transition: background-color 0.3s;
     }
-    button {
+    .light-mode #comment-form textarea {
+      background-color: #eee;
+      color: #111;
+    }
+    #comment-form textarea:focus {
+      outline: none;
+      background-color: #00fff0;
+      color: #000;
+      font-weight: 700;
+    }
+    #comment-form button {
+      align-self: flex-end;
       background-color: #00fff0;
       color: #000;
       font-weight: 700;
       cursor: pointer;
+      padding: 8px 18px;
+      border-radius: 6px;
+      border: none;
       transition: background-color 0.3s;
     }
-    button:hover {
+    #comment-form button:hover {
       background-color: #00cacc;
     }
-    input[type="password"]:focus,
-    input[type="text"]:focus,
-    textarea:focus,
-    select:focus {
-      outline: none;
-      border-color: #00fff0;
-      background-color: #111;
+    #comment-form .error-msg {
+      color: #ff4d4d;
+      font-weight: 600;
+      text-align: right;
+      font-size: 0.9em;
+      margin-top: -10px;
+      margin-bottom: 10px;
     }
-    .admin-panel, #login-form, #register-form, #user-login-form {
+
+    /* Formularios de login y registro */
+    section.form-section {
+      max-width: 400px;
+      margin: 0 auto;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #00fff0;
+      transition: background-color 0.3s;
+    }
+    .light-mode section.form-section {
+      background: #fafafa;
+      color: #111;
+      box-shadow: 0 0 10px #00cacc;
+    }
+    section.form-section h3 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      text-align: center;
+      color: #00fff0;
+    }
+    section.form-section input, section.form-section button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+      border: none;
+      font-size: 1em;
+      font-family: inherit;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    section.form-section input {
+      background-color: #222;
+      color: #eee;
+    }
+    .light-mode section.form-section input {
+      background-color: #eee;
+      color: #111;
+    }
+    section.form-section input:focus {
+      outline: none;
+      background-color: #00fff0;
+      color: #000;
+      font-weight: 700;
+    }
+    section.form-section button {
+      background-color: #00fff0;
+      color: #000;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    section.form-section button:hover {
+      background-color: #00cacc;
+    }
+    section.form-section p.error-msg, section.form-section p.success-msg {
+      text-align: center;
+      font-weight: 600;
+      margin: 0;
+      margin-top: -8px;
+      margin-bottom: 10px;
+    }
+    section.form-section p.error-msg {
+      color: #ff4d4d;
+    }
+    section.form-section p.success-msg {
+      color: #4caf50;
+    }
+
+    /* Panel Admin */
+    .admin-panel {
+      max-width: 600px;
+      margin: 0 auto 30px;
       border-top: 2px dashed #00fff0;
       padding-top: 20px;
-      margin-top: 40px;
       display: none;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #00fff0;
+      transition: background-color 0.3s;
     }
-    .spam-warning, .error-msg, .success-msg {
-      font-size: 0.9em;
-      margin-top: 5px;
-      font-weight: 600;
+    .light-mode .admin-panel {
+      background-color: #fafafa;
+      color: #111;
+      box-shadow: 0 0 15px #00cacc;
+    }
+    .admin-panel h3 {
+      margin-top: 0;
+      color: #00fff0;
       text-align: center;
+      margin-bottom: 15px;
+    }
+    .admin-panel input[type=text],
+    .admin-panel select,
+    .admin-panel textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 15px;
+      font-family: inherit;
+      font-size: 1em;
+      resize: vertical;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .admin-panel input[type=text],
+    .admin-panel select {
+      height: 38px;
+    }
+    .admin-panel textarea {
+      min-height: 100px;
+    }
+    .light-mode .admin-panel input[type=text],
+    .light-mode .admin-panel select,
+    .light-mode .admin-panel textarea {
+      background-color: #eee;
+      color: #111;
+    }
+    .admin-panel input[type=text]:focus,
+    .admin-panel select:focus,
+    .admin-panel textarea:focus {
+      outline: none;
+      background-color: #00fff0;
+      color: #000;
+      font-weight: 700;
+    }
+    .admin-panel button {
+      background-color: #00fff0;
+      color: #000;
+      font-weight: 700;
+      padding: 12px;
+      border: none;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .admin-panel button:hover {
+      background-color: #00cacc;
     }
     .spam-warning {
+      text-align: center;
       color: #ff4d4d;
+      font-weight: 700;
+      margin-top: -10px;
+      margin-bottom: 10px;
     }
-    .error-msg {
-      color: #ff4d4d;
-    }
-    .success-msg {
-      color: #4CAF50;
-    }
-    #toggle-mode {
-      position: absolute;
-      top: 15px;
-      right: 90px;
-      background: none;
-      border: none;
-      color: #00fff0;
-      font-size: 1.5em;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.3s;
-    }
-    #toggle-mode:hover {
-      color: #00cacc;
-    }
-    #btn-admin-toggle {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      background: none;
-      border: none;
-      color: #00fff0;
-      font-size: 1.5em;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.3s;
-    }
-    #btn-admin-toggle:hover {
-      color: #00cacc;
-    }
-    button.delete-post {
+
+    /* Botones eliminar */
+    button.delete-post, button.delete-news, button.delete-comment {
       background-color: #ff4d4d;
       color: white;
       font-weight: 700;
       border-radius: 5px;
       padding: 5px 10px;
-      font-size: 0.9em;
-      position: absolute;
-      top: 10px;
-      right: 10px;
+      font-size: 0.85em;
       cursor: pointer;
       transition: background-color 0.3s;
+      border: none;
+      user-select: none;
     }
-    button.delete-post:hover {
+    button.delete-post:hover, button.delete-news:hover, button.delete-comment:hover {
       background-color: #cc0000;
     }
+
+    /* Barra superior botones */
+    #toggle-mode, #btn-admin-toggle {
+      position: absolute;
+      top: 20px;
+      background: none;
+      border: none;
+      color: #00fff0;
+      font-size: 1.7em;
+      cursor: pointer;
+      user-select: none;
+      transition: color 0.3s;
+      padding: 0 6px;
+    }
+    #toggle-mode:hover, #btn-admin-toggle:hover {
+      color: #00cacc;
+    }
+    #toggle-mode {
+      right: 80px;
+    }
+    #btn-admin-toggle {
+      right: 20px;
+    }
+
+    /* Info usuario */
     #user-info {
       margin-top: 10px;
       text-align: center;
       font-weight: 600;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     #logout-btn {
-      margin-top: 5px;
       cursor: pointer;
       background-color: #ff4d4d;
       color: white;
-      padding: 5px 15px;
-      border-radius: 5px;
+      padding: 6px 20px;
+      border-radius: 6px;
       font-weight: 600;
       border: none;
       transition: background-color 0.3s;
+      user-select: none;
     }
     #logout-btn:hover {
       background-color: #cc0000;
     }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      nav ul {
+        flex-direction: column;
+        gap: 10px;
+      }
+      #user-info {
+        flex-direction: column;
+      }
+    }
+
   </style>
 </head>
 <body>
   <header>
     <h1>🛡️ CyberLog</h1>
-    <h2>🔐 Explorando la Seguridad Informática</h2>
+    <h2>🔐 Blog y Foro de Seguridad Informática</h2>
     <p>💻 Aprendiendo a proteger lo que otros no ven</p>
     <p>🧠 Observa, analiza, protege.</p>
-    <button id="toggle-mode" title="Cambiar modo claro/oscuro">🌙</button>
-    <button id="btn-admin-toggle" title="Mostrar/Ocultar panel admin">🔑</button>
+    <button id="toggle-mode" title="Cambiar modo claro/oscuro" aria-label="Cambiar modo claro/oscuro">🌙</button>
+    <button id="btn-admin-toggle" title="Mostrar/Ocultar panel admin" aria-label="Mostrar/Ocultar panel admin">🔑</button>
     <nav>
       <ul>
-        <li><a id="tab-posts" class="active">Publicaciones</a></li>
-        <li><a id="tab-news">Noticias</a></li>
+        <li><a id="tab-posts" class="active" tabindex="0">Publicaciones</a></li>
+        <li><a id="tab-news" tabindex="0">Noticias</a></li>
+        <li><a id="tab-forum" tabindex="0">Foro</a></li>
       </ul>
     </nav>
   </header>
 
   <main class="container">
+    <!-- Info usuario -->
     <div id="user-info" style="display:none;">
       Usuario: <span id="user-name"></span>
       <button id="logout-btn" title="Cerrar sesión">Salir</button>
     </div>
 
-    <section id="posts" style="display:none;">
-      <!-- Posts o noticias se cargarán aquí -->
+    <!-- Sección publicaciones -->
+    <section id="posts" aria-label="Publicaciones del blog"></section>
+
+    <!-- Sección noticias -->
+    <section id="news" aria-label="Noticias"></section>
+
+    <!-- Sección foro -->
+    <section id="forum" aria-label="Foro de discusión">
+      <h2>💬 Foro - Comentarios y debates</h2>
+      <div id="forum-post-list" style="margin-bottom: 30px;"></div>
+
+      <div id="selected-post-forum" style="display:none;">
+        <button onclick="backToForumList()" style="margin-bottom:15px; background:#00fff0; color:#000; padding:8px 15px; border:none; border-radius:6px; cursor:pointer; font-weight:700;">⬅ Volver a lista</button>
+        <div id="forum-post-detail"></div>
+        <h3>Comentarios</h3>
+        <div id="comments-container"></div>
+        <form id="comment-form" aria-label="Formulario para agregar comentario">
+          <textarea id="comment-text" placeholder="Escribe tu comentario aquí..." required minlength="2" maxlength="500"></textarea>
+          <p class="error-msg" id="comment-error"></p>
+          <button type="submit">Enviar comentario</button>
+        </form>
+      </div>
     </section>
 
     <!-- Registro usuario -->
-    <section id="register-form">
+    <section id="register-form" class="form-section" aria-label="Formulario de registro de usuario">
       <h3>📝 Registro de Usuario</h3>
-      <input type="text" id="reg-username" placeholder="Nombre de usuario" autocomplete="off" />
-      <input type="password" id="reg-password" placeholder="Contraseña" autocomplete="new-password" />
-      <button onclick="register()">Registrarse</button>
-      <p id="register-msg" class="error-msg"></p>
+      <input type="text" id="reg-username" placeholder="Nombre de usuario" autocomplete="off" aria-required="true" aria-describedby="reg-msg" />
+      <input type="password" id="reg-password" placeholder="Contraseña" autocomplete="new-password" aria-required="true" aria-describedby="reg-msg" />
+      <button id="btn-register">Registrarse</button>
+      <p id="register-msg" class="error-msg" role="alert" aria-live="polite"></p>
     </section>
 
     <!-- Login usuario -->
-    <section id="user-login-form">
+    <section id="user-login-form" class="form-section" aria-label="Formulario de inicio de sesión de usuario">
       <h3>🔐 Iniciar Sesión</h3>
-      <input type="text" id="login-username" placeholder="Nombre de usuario" autocomplete="off" />
-      <input type="password" id="login-password" placeholder="Contraseña" autocomplete="current-password" />
-      <button onclick="userLogin()">Entrar</button>
-      <p id="login-user-msg" class="error-msg"></p>
+      <input type="text" id="login-username" placeholder="Nombre de usuario" autocomplete="off" aria-required="true" aria-describedby="login-user-msg" />
+      <input type="password" id="login-password" placeholder="Contraseña" autocomplete="current-password" aria-required="true" aria-describedby="login-user-msg" />
+      <button id="btn-login-user">Entrar</button>
+      <p id="login-user-msg" class="error-msg" role="alert" aria-live="polite"></p>
     </section>
 
     <!-- Login admin -->
-    <section id="login-form">
+    <section id="login-form" class="form-section" aria-label="Formulario de acceso de administrador">
       <h3>🔐 Acceso de Administrador</h3>
-      <input type="password" id="admin-pass" placeholder="Contraseña de admin" autocomplete="off" />
-      <button onclick="loginAdmin()">Ingresar</button>
-      <p id="login-msg" class="error-msg"></p>
+      <input type="password" id="admin-pass" placeholder="Contraseña de admin" autocomplete="off" aria-describedby="login-msg" />
+      <button id="btn-login-admin">Ingresar</button>
+      <p id="login-msg" class="error-msg" role="alert" aria-live="polite"></p>
     </section>
 
     <!-- Panel admin -->
-    <section class="admin-panel" id="admin-panel">
+    <section class="admin-panel" id="admin-panel" aria-label="Panel de administración">
       <h3>🛠 Panel de Administración</h3>
-      <select id="post-type">
+      <select id="post-type" aria-label="Tipo de publicación">
         <option value="post" selected>Publicación</option>
         <option value="news">Noticia</option>
       </select>
-      <input type="text" id="new-title" placeholder="Título del post" maxlength="100" />
-      <textarea id="new-content" placeholder="Contenido..." rows="6" maxlength="3000"></textarea>
-      <button onclick="addPost()">📤 Publicar</button>
-      <p class="spam-warning" id="spam-warning"></p>
+      <input type="text" id="new-title" placeholder="Título del post" maxlength="100" aria-required="true" />
+      <textarea id="new-content" placeholder="Contenido..." rows="6" maxlength="3000" aria-required="true"></textarea>
+      <button id="btn-add-post">📤 Publicar</button>
+      <p class="spam-warning" id="spam-warning" role="alert" aria-live="polite"></p>
     </section>
   </main>
 
@@ -270,7 +510,17 @@
     const discordWebhook = "https://discord.com/api/webhooks/ID/WEBHOOK"; // Cambia esta URL por tu webhook real
 
     // DOM elements
-    const postsContainer = document.getElementById("posts");
+    const postsSection = document.getElementById("posts");
+    const newsSection = document.getElementById("news");
+    const forumSection = document.getElementById("forum");
+    const forumPostList = document.getElementById("forum-post-list");
+    const selectedPostForum = document.getElementById("selected-post-forum");
+    const forumPostDetail = document.getElementById("forum-post-detail");
+    const commentsContainer = document.getElementById("comments-container");
+    const commentForm = document.getElementById("comment-form");
+    const commentText = document.getElementById("comment-text");
+    const commentError = document.getElementById("comment-error");
+
     const adminPanel = document.getElementById("admin-panel");
     const loginForm = document.getElementById("login-form");
     const loginMsg = document.getElementById("login-msg");
@@ -280,6 +530,7 @@
 
     const tabPosts = document.getElementById("tab-posts");
     const tabNews = document.getElementById("tab-news");
+    const tabForum = document.getElementById("tab-forum");
 
     const registerForm = document.getElementById("register-form");
     const loginUserForm = document.getElementById("user-login-form");
@@ -290,29 +541,37 @@
     const userNameSpan = document.getElementById("user-name");
     const logoutBtn = document.getElementById("logout-btn");
 
+    const btnRegister = document.getElementById("btn-register");
+    const btnLoginUser = document.getElementById("btn-login-user");
+    const btnLoginAdmin = document.getElementById("btn-login-admin");
+    const btnAddPost = document.getElementById("btn-add-post");
+
+    const inputRegUsername = document.getElementById("reg-username");
+    const inputRegPassword = document.getElementById("reg-password");
+    const inputLoginUsername = document.getElementById("login-username");
+    const inputLoginPassword = document.getElementById("login-password");
+    const inputAdminPass = document.getElementById("admin-pass");
+
     // Variables
     let isAdmin = false;
     let lastPostTime = 0;
     let posts = [];
     let news = [];
-    let currentTab = 'post'; // 'post' o 'news'
+    let comments = []; // Array de objetos {idPost, idComment, username, text, timestamp}
+    let currentTab = 'post'; // 'post' | 'news' | 'forum'
 
-    // Usuario actual logueado
     let currentUser = null;
 
-    // --- Funciones de usuario ---
+    let selectedForumPostId = null;
 
-    // Guarda usuarios en localStorage (objeto {username: password})
+    // --- Utilidades ---
     function saveUsers(users) {
       localStorage.setItem("cyberlog-users", JSON.stringify(users));
     }
-    // Obtiene usuarios guardados
     function loadUsers() {
       const u = localStorage.getItem("cyberlog-users");
       return u ? JSON.parse(u) : {};
     }
-
-    // Guarda usuario conectado para sesión persistente
     function saveSession(user) {
       localStorage.setItem("cyberlog-current-user", user);
     }
@@ -322,163 +581,19 @@
     function clearSession() {
       localStorage.removeItem("cyberlog-current-user");
     }
-
-    // Registro de usuario nuevo
-    function register() {
-      const username = document.getElementById("reg-username").value.trim();
-      const password = document.getElementById("reg-password").value;
-
-      registerMsg.textContent = "";
-      if(!username || !password){
-        registerMsg.textContent = "⚠️ Completa usuario y contraseña.";
-        return;
-      }
-
-      let users = loadUsers();
-      if(users[username]){
-        registerMsg.textContent = "⚠️ Usuario ya existe.";
-        return;
-      }
-
-      users[username] = password;
-      saveUsers(users);
-      registerMsg.textContent = "✅ Registro exitoso, ahora inicia sesión.";
-      document.getElementById("reg-username").value = "";
-      document.getElementById("reg-password").value = "";
-      showLoginForm();
-    }
-
-    // Login de usuario normal
-    function userLogin() {
-      const username = document.getElementById("login-username").value.trim();
-      const password = document.getElementById("login-password").value;
-
-      loginUserMsg.textContent = "";
-      if(!username || !password){
-        loginUserMsg.textContent = "⚠️ Completa usuario y contraseña.";
-        return;
-      }
-
-      let users = loadUsers();
-      if(users[username] && users[username] === password){
-        currentUser = username;
-        saveSession(currentUser);
-        loginUserMsg.textContent = "";
-        showContentForUser();
-      } else {
-        loginUserMsg.textContent = "❌ Usuario o contraseña incorrectos.";
-      }
-    }
-
-    // Logout usuario
-    logoutBtn.onclick = () => {
-      currentUser = null;
-      clearSession();
-      showLoginRegister();
-      hideContent();
-      isAdmin = false;
-      adminPanel.style.display = "none";
-      loginForm.style.display = "none";
-      btnAdminToggle.style.display = "inline-block";
-    };
-
-    // --- Funciones admin ---
-
-    // Login admin
-    function loginAdmin() {
-      const pass = document.getElementById("admin-pass").value;
-      loginMsg.textContent = "";
-      if(pass === ADMIN_PASSWORD){
-        isAdmin = true;
-        adminPanel.style.display = "block";
-        loginForm.style.display = "none";
-        registerForm.style.display = "none";
-        loginUserForm.style.display = "none";
-        btnAdminToggle.style.display = "none";
-        render();
-      } else {
-        loginMsg.textContent = "❌ Contraseña incorrecta";
-      }
-      document.getElementById("admin-pass").value = "";
-    }
-
-    // Añadir nueva publicación o noticia
-    function addPost() {
-      const now = Date.now();
-      if(now - lastPostTime < 10000){
-        spamWarning.textContent = "🛑 Espera 10 segundos antes de publicar otra vez.";
-        return;
-      }
-
-      const title = document.getElementById("new-title").value.trim();
-      const content = document.getElementById("new-content").value.trim();
-      const type = document.getElementById("post-type").value;
-      if(!title || !content){
-        spamWarning.textContent = "⚠️ Completa título y contenido.";
-        return;
-      }
-
-      if(type === 'post'){
-        posts.unshift({title, content});
-      } else {
-        news.unshift({title, content});
-      }
-
-      saveData();
-      render();
-
-      document.getElementById("new-title").value = "";
-      document.getElementById("new-content").value = "";
-      spamWarning.textContent = "";
-      lastPostTime = now;
-
-      // Log en Discord
-      fetch(discordWebhook, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          content: `📢 Nuevo ${type === 'post' ? 'post' : 'noticia'} publicado en CyberLog:\n**${title}**\n${content}`
-        })
-      }).catch(() => console.warn("No se pudo enviar log a Discord."));
-    }
-
-    // Eliminar publicación o noticia
-    function deleteItem(index){
-      let list = currentTab === 'post' ? posts : news;
-      const title = list[index].title;
-      if(!confirm(`¿Eliminar la ${currentTab === 'post' ? 'publicación' : 'noticia'} "${title}"?`)) return;
-
-      list.splice(index, 1);
-      saveData();
-      render();
-
-      // Log en Discord
-      fetch(discordWebhook, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          content: `🗑️ El admin eliminó la ${currentTab === 'post' ? 'publicación' : 'noticia'}: **${title}**`
-        })
-      }).catch(() => console.warn("No se pudo enviar log a Discord."));
-    }
-
-    // --- Utilidades ---
-
-    // Guardar posts y noticias
-    function saveData(){
+    function saveData() {
       localStorage.setItem("cyberlog-posts", JSON.stringify(posts));
       localStorage.setItem("cyberlog-news", JSON.stringify(news));
+      localStorage.setItem("cyberlog-comments", JSON.stringify(comments));
     }
-
-    // Cargar posts y noticias
-    function loadData(){
+    function loadData() {
       const savedPosts = localStorage.getItem("cyberlog-posts");
       const savedNews = localStorage.getItem("cyberlog-news");
+      const savedComments = localStorage.getItem("cyberlog-comments");
       posts = savedPosts ? JSON.parse(savedPosts) : [];
       news = savedNews ? JSON.parse(savedNews) : [];
+      comments = savedComments ? JSON.parse(savedComments) : [];
     }
-
-    // Escapar HTML para evitar inyección
     function escapeHtml(text) {
       return text.replace(/[&<>"']/g, function(m) {
         return {
@@ -490,82 +605,377 @@
         }[m];
       });
     }
+    function formatDate(ts) {
+      const d = new Date(ts);
+      return d.toLocaleString();
+    }
+    // Generar ID único
+    function generateId() {
+      return '_' + Math.random().toString(36).substr(2, 9);
+    }
 
-    // Renderiza posts o noticias según pestaña (visible para todos)
-    function render(){
-      postsContainer.style.display = "block";
+    // --- Usuario ---
+    function register() {
+      const username = inputRegUsername.value.trim();
+      const password = inputRegPassword.value;
 
-      const list = currentTab === 'post' ? posts : news;
-      postsContainer.innerHTML = "";
-
-      if(list.length === 0){
-        postsContainer.innerHTML = "<p>No hay publicaciones aún.</p>";
+      registerMsg.textContent = "";
+      if (!username || !password) {
+        registerMsg.textContent = "⚠️ Completa usuario y contraseña.";
+        return;
+      }
+      if(username.length < 3){
+        registerMsg.textContent = "⚠️ Usuario debe tener al menos 3 caracteres.";
+        return;
+      }
+      if(password.length < 5){
+        registerMsg.textContent = "⚠️ Contraseña debe tener al menos 5 caracteres.";
         return;
       }
 
-      list.forEach((item, index) => {
-        const entry = document.createElement("section");
-        entry.className = "blog-entry";
-        entry.innerHTML = `
-          <h3>${escapeHtml(item.title)}</h3>
-          <p>${escapeHtml(item.content).replace(/\n/g, "<br>")}</p>
-          ${isAdmin ? `<button class="delete-post" onclick="deleteItem(${index})" title="Eliminar publicación">🗑️</button>` : ""}
+      let users = loadUsers();
+      if (users[username]) {
+        registerMsg.textContent = "⚠️ Usuario ya existe.";
+        return;
+      }
+
+      users[username] = password;
+      saveUsers(users);
+      registerMsg.style.color = "#4caf50";
+      registerMsg.textContent = "✅ Registro exitoso, ahora inicia sesión.";
+      inputRegUsername.value = "";
+      inputRegPassword.value = "";
+
+      // Cambiar a login
+      showLoginRegister();
+      setTimeout(() => {
+        registerMsg.textContent = "";
+        registerMsg.style.color = "#ff4d4d";
+      }, 5000);
+    }
+    function userLogin() {
+      const username = inputLoginUsername.value.trim();
+      const password = inputLoginPassword.value;
+
+      loginUserMsg.textContent = "";
+      if (!username || !password) {
+        loginUserMsg.textContent = "⚠️ Completa usuario y contraseña.";
+        return;
+      }
+      let users = loadUsers();
+      if (users[username] && users[username] === password) {
+        currentUser = username;
+        saveSession(currentUser);
+        loginUserMsg.textContent = "";
+        showContentForUser();
+      } else {
+        loginUserMsg.textContent = "❌ Usuario o contraseña incorrectos.";
+      }
+    }
+    logoutBtn.onclick = () => {
+      currentUser = null;
+      clearSession();
+      showLoginRegister();
+      hideContent();
+      isAdmin = false;
+      adminPanel.style.display = "none";
+      loginForm.style.display = "none";
+      btnAdminToggle.style.display = "inline-block";
+      selectedForumPostId = null;
+    };
+
+    // --- Admin ---
+    function loginAdmin() {
+      const pass = inputAdminPass.value;
+      loginMsg.textContent = "";
+      if (pass === ADMIN_PASSWORD) {
+        isAdmin = true;
+        adminPanel.style.display = "block";
+        loginForm.style.display = "none";
+        registerForm.style.display = "none";
+        loginUserForm.style.display = "none";
+        btnAdminToggle.style.display = "none";
+        render();
+      } else {
+        loginMsg.textContent = "❌ Contraseña incorrecta";
+      }
+      inputAdminPass.value = "";
+    }
+    function addPost() {
+      const now = Date.now();
+      if (now - lastPostTime < 10000) {
+        spamWarning.textContent = "🛑 Espera 10 segundos antes de publicar otra vez.";
+        return;
+      }
+      const title = document.getElementById("new-title").value.trim();
+      const content = document.getElementById("new-content").value.trim();
+      const type = document.getElementById("post-type").value;
+      if (!title || !content) {
+        spamWarning.textContent = "⚠️ Completa título y contenido.";
+        return;
+      }
+
+      const newPost = {
+        id: generateId(),
+        title,
+        content,
+        timestamp: now
+      };
+
+      if (type === "post") {
+        posts.unshift(newPost);
+      } else {
+        news.unshift(newPost);
+      }
+
+      saveData();
+      render();
+
+      document.getElementById("new-title").value = "";
+      document.getElementById("new-content").value = "";
+      spamWarning.textContent = "";
+      lastPostTime = now;
+
+      // Log en Discord (opcional)
+      fetch(discordWebhook, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          content: `📢 Nuevo ${type === 'post' ? 'post' : 'noticia'} publicado en CyberLog:\n**${title}**\n${content}`
+        })
+      }).catch(() => console.warn("No se pudo enviar log a Discord."));
+    }
+    function deleteItem(id, type) {
+      if (!confirm(`¿Eliminar esta ${type === 'post' ? 'publicación' : 'noticia'}?`)) return;
+      if (type === "post") {
+        posts = posts.filter(p => p.id !== id);
+        // También eliminar comentarios de ese post
+        comments = comments.filter(c => c.idPost !== id);
+      } else {
+        news = news.filter(n => n.id !== id);
+      }
+      saveData();
+      render();
+
+      // Log en Discord
+      fetch(discordWebhook, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          content: `🗑️ El admin eliminó la ${type === 'post' ? 'publicación' : 'noticia'}.`
+        })
+      }).catch(() => console.warn("No se pudo enviar log a Discord."));
+    }
+
+    // --- Renderizar posts, noticias y foro ---
+
+    function renderPosts() {
+      postsSection.innerHTML = "";
+      if (posts.length === 0) {
+        postsSection.innerHTML = "<p>No hay publicaciones aún.</p>";
+        return;
+      }
+      posts.forEach(post => {
+        const postEl = document.createElement("article");
+        postEl.className = "post-card";
+        postEl.innerHTML = `
+          <h3>${escapeHtml(post.title)}</h3>
+          <small>Publicado: ${formatDate(post.timestamp)}</small>
+          <p>${escapeHtml(post.content).replace(/\n/g, "<br>")}</p>
+          ${isAdmin ? `<button class="delete-post" title="Eliminar publicación">🗑️</button>` : ""}
+          <button class="btn-foro" title="Ir al foro para esta publicación">💬 Ver Foro</button>
         `;
-        postsContainer.appendChild(entry);
+        // Eventos botones
+        if(isAdmin) {
+          postEl.querySelector("button.delete-post").onclick = () => deleteItem(post.id, "post");
+        }
+        postEl.querySelector("button.btn-foro").onclick = () => openForumPost(post.id);
+        postsSection.appendChild(postEl);
+      });
+    }
+    function renderNews() {
+      newsSection.innerHTML = "";
+      if (news.length === 0) {
+        newsSection.innerHTML = "<p>No hay noticias aún.</p>";
+        return;
+      }
+      news.forEach(n => {
+        const newsEl = document.createElement("article");
+        newsEl.className = "news-card";
+        newsEl.innerHTML = `
+          <h3>${escapeHtml(n.title)}</h3>
+          <small>Publicado: ${formatDate(n.timestamp)}</small>
+          <p>${escapeHtml(n.content).replace(/\n/g, "<br>")}</p>
+          ${isAdmin ? `<button class="delete-news" title="Eliminar noticia">🗑️</button>` : ""}
+        `;
+        if(isAdmin) {
+          newsEl.querySelector("button.delete-news").onclick = () => deleteItem(n.id, "news");
+        }
+        newsSection.appendChild(newsEl);
       });
     }
 
-    // Muestra formulario de login y registro usuario
-    function showLoginRegister(){
-      registerForm.style.display = "block";
-      loginUserForm.style.display = "block";
-      loginForm.style.display = "none";
-      adminPanel.style.display = "none";
-      postsContainer.style.display = "block"; // para que vean posts aunque no logueados
-      userInfo.style.display = "none";
-      btnAdminToggle.style.display = "inline-block";
-      isAdmin = false;
-      currentUser = null;
-      render();
+    function renderForumList() {
+      forumPostList.innerHTML = "";
+      if(posts.length === 0) {
+        forumPostList.innerHTML = "<p>No hay publicaciones para discutir aún.</p>";
+        return;
+      }
+      posts.forEach(post => {
+        const div = document.createElement("div");
+        div.className = "post-card";
+        div.style.cursor = "pointer";
+        div.innerHTML = `
+          <h3>${escapeHtml(post.title)}</h3>
+          <small>Publicado: ${formatDate(post.timestamp)}</small>
+          <p>${escapeHtml(post.content.substring(0, 150))}...</p>
+        `;
+        div.onclick = () => openForumPost(post.id);
+        forumPostList.appendChild(div);
+      });
+    }
+    // Abrir post del foro para ver detalles y comentarios
+    function openForumPost(id) {
+      selectedForumPostId = id;
+      const post = posts.find(p => p.id === id);
+      if (!post) return;
+
+      selectedPostForum.innerHTML = `
+        <h2>${escapeHtml(post.title)}</h2>
+        <small>Publicado: ${formatDate(post.timestamp)}</small>
+        <p>${escapeHtml(post.content).replace(/\n/g, "<br>")}</p>
+      `;
+
+      renderComments(id);
+
+      forumPostDetail.style.display = "block";
+      forumPostList.style.display = "none";
+      commentForm.style.display = currentUser ? "block" : "none";
+    }
+    // Volver a lista de posts en foro
+    function backToForumList() {
+      selectedForumPostId = null;
+      forumPostDetail.style.display = "none";
+      forumPostList.style.display = "block";
+      commentForm.style.display = "none";
+      commentError.textContent = "";
+      commentText.value = "";
+    }
+    // Renderizar comentarios para post seleccionado
+    function renderComments(idPost) {
+      commentsContainer.innerHTML = "";
+      const filteredComments = comments.filter(c => c.idPost === idPost);
+      if (filteredComments.length === 0) {
+        commentsContainer.innerHTML = "<p>No hay comentarios aún.</p>";
+        return;
+      }
+      filteredComments.forEach(c => {
+        const commentEl = document.createElement("div");
+        commentEl.className = "comment";
+        commentEl.innerHTML = `
+          <strong>${escapeHtml(c.username)}</strong> <small>${formatDate(c.timestamp)}</small>
+          <p>${escapeHtml(c.text).replace(/\n/g, "<br>")}</p>
+        `;
+        if(isAdmin) {
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "Eliminar";
+          delBtn.style.marginLeft = "10px";
+          delBtn.style.backgroundColor = "#ff4d4d";
+          delBtn.style.color = "#fff";
+          delBtn.style.border = "none";
+          delBtn.style.borderRadius = "4px";
+          delBtn.style.cursor = "pointer";
+          delBtn.onclick = () => deleteComment(c.idComment);
+          commentEl.appendChild(delBtn);
+        }
+        commentsContainer.appendChild(commentEl);
+      });
+    }
+    // Añadir comentario a post seleccionado
+    function addComment() {
+      commentError.textContent = "";
+      const text = commentText.value.trim();
+      if (!text) {
+        commentError.textContent = "⚠️ El comentario no puede estar vacío.";
+        return;
+      }
+      if (!selectedForumPostId) {
+        commentError.textContent = "⚠️ No hay post seleccionado.";
+        return;
+      }
+      const now = Date.now();
+      comments.push({
+        idPost: selectedForumPostId,
+        idComment: generateId(),
+        username: currentUser,
+        text,
+        timestamp: now
+      });
+      saveData();
+      renderComments(selectedForumPostId);
+      commentText.value = "";
+
+      // Log Discord (opcional)
+      fetch(discordWebhook, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          content: `💬 Nuevo comentario de **${currentUser}** en post **${posts.find(p => p.id === selectedForumPostId).title}**:\n${text}`
+        })
+      }).catch(() => console.warn("No se pudo enviar comentario a Discord."));
+    }
+    function deleteComment(idComment) {
+      if (!confirm("¿Eliminar este comentario?")) return;
+      comments = comments.filter(c => c.idComment !== idComment);
+      saveData();
+      renderComments(selectedForumPostId);
+
+      // Log Discord
+      fetch(discordWebhook, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          content: `🗑️ El admin eliminó un comentario en el foro.`
+        })
+      }).catch(() => console.warn("No se pudo enviar log a Discord."));
     }
 
-    // Muestra contenido para usuario logueado
-    function showContentForUser(){
-      registerForm.style.display = "none";
-      loginUserForm.style.display = "none";
-      loginForm.style.display = "block"; // para admin login
-      postsContainer.style.display = "block";
-      userInfo.style.display = "block";
-      userNameSpan.textContent = currentUser;
-      btnAdminToggle.style.display = isAdmin ? "none" : "inline-block";
-      render();
-    }
-
-    // Oculta contenido protegido
-    function hideContent(){
-      postsContainer.style.display = "none";
-      adminPanel.style.display = "none";
-      userInfo.style.display = "none";
-    }
-
-    // Cambiar pestaña publicaciones/noticias
+    // --- Navegación pestañas ---
     tabPosts.onclick = () => {
       currentTab = "post";
       tabPosts.classList.add("active");
       tabNews.classList.remove("active");
+      tabForum.classList.remove("active");
+      postsSection.style.display = "block";
+      newsSection.style.display = "none";
+      forumSection.style.display = "none";
       render();
     };
-
     tabNews.onclick = () => {
       currentTab = "news";
       tabNews.classList.add("active");
       tabPosts.classList.remove("active");
+      tabForum.classList.remove("active");
+      newsSection.style.display = "block";
+      postsSection.style.display = "none";
+      forumSection.style.display = "none";
       render();
     };
+    tabForum.onclick = () => {
+      currentTab = "forum";
+      tabForum.classList.add("active");
+      tabPosts.classList.remove("active");
+      tabNews.classList.remove("active");
+      forumSection.style.display = "block";
+      postsSection.style.display = "none";
+      newsSection.style.display = "none";
+      renderForumList();
+      backToForumList();
+    };
 
-    // Toggle panel admin con botón llave
+    // Toggle panel admin
     btnAdminToggle.onclick = () => {
-      if(loginForm.style.display === "block"){
+      if (loginForm.style.display === "block") {
         loginForm.style.display = "none";
       } else {
         loginForm.style.display = "block";
@@ -580,7 +990,7 @@
       return localStorage.getItem("cyberlog-mode") || "dark";
     }
     function applyMode(mode) {
-      if(mode === "light"){
+      if (mode === "light") {
         document.body.classList.add("light-mode");
         toggleModeBtn.textContent = "🌙";
       } else {
@@ -594,24 +1004,68 @@
       applyMode(current === "dark" ? "light" : "dark");
     };
 
+    // --- Mostrar y ocultar formularios y contenido ---
+
+    function showLoginRegister() {
+      registerForm.style.display = "block";
+      loginUserForm.style.display = "block";
+      loginForm.style.display = "none";
+      adminPanel.style.display = "none";
+      postsSection.style.display = "block";
+      newsSection.style.display = "none";
+      forumSection.style.display = "none";
+      userInfo.style.display = "none";
+      btnAdminToggle.style.display = "inline-block";
+      isAdmin = false;
+      currentUser = null;
+      selectedForumPostId = null;
+      render();
+    }
+    function showContentForUser() {
+      registerForm.style.display = "none";
+      loginUserForm.style.display = "none";
+      loginForm.style.display = "block";
+      postsSection.style.display = currentTab === "post" ? "block" : "none";
+      newsSection.style.display = currentTab === "news" ? "block" : "none";
+      forumSection.style.display = currentTab === "forum" ? "block" : "none";
+      userInfo.style.display = "block";
+      userNameSpan.textContent = currentUser;
+      btnAdminToggle.style.display = isAdmin ? "none" : "inline-block";
+      render();
+    }
+    function hideContent() {
+      postsSection.style.display = "none";
+      newsSection.style.display = "none";
+      forumSection.style.display = "none";
+      adminPanel.style.display = "none";
+      userInfo.style.display = "none";
+    }
+
+    // --- Render función general ---
+    function render() {
+      if (currentTab === "post") {
+        renderPosts();
+      } else if (currentTab === "news") {
+        renderNews();
+      } else if (currentTab === "forum") {
+        renderForumList();
+      }
+    }
+
     // --- Inicialización ---
-
-    function init(){
+    function init() {
       loadData();
-
       const savedUser = loadSession();
-      if(savedUser){
+      if (savedUser) {
         currentUser = savedUser;
         showContentForUser();
       } else {
         showLoginRegister();
       }
-
-      // Aplicar modo guardado
       applyMode(loadMode());
     }
-
     init();
+
   </script>
 </body>
 </html>
