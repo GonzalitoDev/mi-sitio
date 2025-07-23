@@ -312,6 +312,17 @@
       return u ? JSON.parse(u) : {};
     }
 
+    // Guarda usuario conectado para sesión persistente
+    function saveSession(user) {
+      localStorage.setItem("cyberlog-current-user", user);
+    }
+    function loadSession() {
+      return localStorage.getItem("cyberlog-current-user");
+    }
+    function clearSession() {
+      localStorage.removeItem("cyberlog-current-user");
+    }
+
     // Registro de usuario nuevo
     function register() {
       const username = document.getElementById("reg-username").value.trim();
@@ -351,6 +362,7 @@
       let users = loadUsers();
       if(users[username] && users[username] === password){
         currentUser = username;
+        saveSession(currentUser);
         loginUserMsg.textContent = "";
         showContentForUser();
       } else {
@@ -361,6 +373,7 @@
     // Logout usuario
     logoutBtn.onclick = () => {
       currentUser = null;
+      clearSession();
       showLoginRegister();
       hideContent();
       isAdmin = false;
@@ -478,12 +491,8 @@
       });
     }
 
-    // Renderiza posts o noticias según pestaña y si usuario está logueado
+    // Renderiza posts o noticias según pestaña (visible para todos)
     function render(){
-      if(!currentUser && !isAdmin){
-        postsContainer.style.display = "none";
-        return;
-      }
       postsContainer.style.display = "block";
 
       const list = currentTab === 'post' ? posts : news;
@@ -512,84 +521,97 @@
       loginUserForm.style.display = "block";
       loginForm.style.display = "none";
       adminPanel.style.display = "none";
-      postsContainer.style.display = "none";
+      postsContainer.style.display = "block"; // para que vean posts aunque no logueados
       userInfo.style.display = "none";
       btnAdminToggle.style.display = "inline-block";
+      isAdmin = false;
+      currentUser = null;
+      render();
     }
 
     // Muestra contenido para usuario logueado
     function showContentForUser(){
       registerForm.style.display = "none";
       loginUserForm.style.display = "none";
-      loginForm.style.display = "none";
-      adminPanel.style.display = "none";
+      loginForm.style.display = "block"; // para admin login
       postsContainer.style.display = "block";
       userInfo.style.display = "block";
       userNameSpan.textContent = currentUser;
-      btnAdminToggle.style.display = "inline-block";
+      btnAdminToggle.style.display = isAdmin ? "none" : "inline-block";
       render();
     }
 
-    // Toggle modo oscuro/claro
-    toggleModeBtn.addEventListener("click", () => {
-      document.body.classList.toggle("light-mode");
-      if(document.body.classList.contains("light-mode")){
-        toggleModeBtn.textContent = "🌙";
-      } else {
-        toggleModeBtn.textContent = "☀️";
-      }
-    });
+    // Oculta contenido protegido
+    function hideContent(){
+      postsContainer.style.display = "none";
+      adminPanel.style.display = "none";
+      userInfo.style.display = "none";
+    }
 
-    // Toggle mostrar login/admin con botón en header
-    btnAdminToggle.addEventListener("click", () => {
-      if(!isAdmin){
-        if(loginForm.style.display === "block"){
-          loginForm.style.display = "none";
-        } else {
-          loginForm.style.display = "block";
-          adminPanel.style.display = "none";
-          registerForm.style.display = "none";
-          loginUserForm.style.display = "none";
-          loginMsg.textContent = "";
-        }
-      } else {
-        if(adminPanel.style.display === "block"){
-          adminPanel.style.display = "none";
-        } else {
-          adminPanel.style.display = "block";
-          loginForm.style.display = "none";
-          registerForm.style.display = "none";
-          loginUserForm.style.display = "none";
-        }
-      }
-    });
-
-    // Cambiar pestañas Publicaciones / Noticias
-    tabPosts.addEventListener("click", () => {
-      currentTab = 'post';
+    // Cambiar pestaña publicaciones/noticias
+    tabPosts.onclick = () => {
+      currentTab = "post";
       tabPosts.classList.add("active");
       tabNews.classList.remove("active");
       render();
-    });
+    };
 
-    tabNews.addEventListener("click", () => {
-      currentTab = 'news';
+    tabNews.onclick = () => {
+      currentTab = "news";
       tabNews.classList.add("active");
       tabPosts.classList.remove("active");
       render();
-    });
+    };
 
-    // Inicialización
-    loadData();
-    showLoginRegister();
-
-    // Recarga periódica para que usuarios vean nuevos posts sin recargar página
-    setInterval(() => {
-      if (!adminPanel.style.display || adminPanel.style.display === "none") {
-        loadData();
-        render();
+    // Toggle panel admin con botón llave
+    btnAdminToggle.onclick = () => {
+      if(loginForm.style.display === "block"){
+        loginForm.style.display = "none";
+      } else {
+        loginForm.style.display = "block";
       }
-    }, 15000);
+    };
+
+    // Modo oscuro/claro persistente
+    function saveMode(mode) {
+      localStorage.setItem("cyberlog-mode", mode);
+    }
+    function loadMode() {
+      return localStorage.getItem("cyberlog-mode") || "dark";
+    }
+    function applyMode(mode) {
+      if(mode === "light"){
+        document.body.classList.add("light-mode");
+        toggleModeBtn.textContent = "🌙";
+      } else {
+        document.body.classList.remove("light-mode");
+        toggleModeBtn.textContent = "☀️";
+      }
+      saveMode(mode);
+    }
+    toggleModeBtn.onclick = () => {
+      const current = loadMode();
+      applyMode(current === "dark" ? "light" : "dark");
+    };
+
+    // --- Inicialización ---
+
+    function init(){
+      loadData();
+
+      const savedUser = loadSession();
+      if(savedUser){
+        currentUser = savedUser;
+        showContentForUser();
+      } else {
+        showLoginRegister();
+      }
+
+      // Aplicar modo guardado
+      applyMode(loadMode());
+    }
+
+    init();
   </script>
 </body>
 </html>
