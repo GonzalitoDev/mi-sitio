@@ -11,50 +11,98 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Montserrat:wght@400;700&display=swap');
 
-    * {
+    /* --------- FONDO MATRIX --------- */
+    body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
       font-family: 'Montserrat', sans-serif;
-      background: #0f111a;
-      color: #cfd8dc;
+      background: black;
+      overflow-x: hidden;
+      color: #c0fefc;
       min-height: 100vh;
-      padding: 40px 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
       line-height: 1.5;
+      position: relative;
+      z-index: 1;
     }
 
+    canvas#matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: black;
+      display: block;
+    }
+
+    /* --------- NAV --------- */
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(0, 255, 247, 0.15);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #00fff7bb;
+      padding: 12px 30px;
+      display: flex;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 0 15px #00fff7aa;
+    }
+    nav a {
+      color: #00fff7;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+      margin: 0 20px;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #00c7b7;
+    }
+
+    /* --------- HEADER --------- */
     header {
       max-width: 700px;
-      background: #1c1f2a;
-      padding: 40px 35px;
+      background: rgba(0,255,247,0.12);
+      padding: 50px 40px 40px;
       border-radius: 15px;
-      box-shadow: 0 0 20px #0ff;
+      box-shadow: 0 0 20px #00fff7cc;
       text-align: center;
-      margin-bottom: 50px;
-      border: 2px solid #0ff;
+      margin: 100px auto 60px;
+      border: 1.5px solid #00fff7aa;
+      position: relative;
+      z-index: 2;
     }
 
     header h1 {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      font-size: 3.5rem;
+      font-size: 3.8rem;
       color: #00fff7;
-      text-shadow: 0 0 8px #00fff7aa;
+      text-shadow:
+        0 0 5px #00fff7,
+        0 0 10px #00fff7,
+        0 0 20px #00fff7,
+        0 0 30px #00fff7cc;
       margin-bottom: 15px;
+      letter-spacing: 3px;
     }
 
     header p {
       font-size: 1.3rem;
       color: #a0f0f8;
-      max-width: 500px;
+      max-width: 520px;
       margin: 0 auto;
       font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+      text-shadow: 0 0 4px #00fff7aa;
+      line-height: 1.6;
     }
 
     main {
@@ -64,25 +112,31 @@
       justify-content: center;
       max-width: 900px;
       width: 100%;
+      margin-bottom: 60px;
+      z-index: 2;
+      position: relative;
     }
 
     section {
-      background: #222633;
+      background: rgba(0, 255, 247, 0.12);
       padding: 30px 25px;
       border-radius: 12px;
-      box-shadow: 0 0 15px #00fff7aa;
+      box-shadow: 0 0 15px #00fff7bb;
       flex: 1 1 280px;
       transition: transform 0.3s ease;
       border: 1px solid #00fff7bb;
+      color: #b2f1f8;
+      font-family: 'JetBrains Mono', monospace;
     }
 
     section:hover {
       transform: translateY(-6px);
       box-shadow: 0 0 25px #00fff7ee;
+      border-color: #00c7b7;
+      background: rgba(0, 199, 183, 0.15);
     }
 
     section h2 {
-      font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       font-size: 2rem;
       color: #00fff7;
@@ -166,41 +220,150 @@
       vertical-align: middle;
     }
 
+    /* Sobre mi estilo hacker */
+    .about-me {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0,255,247,0.08);
+      border-left: 4px solid #00fff7;
+      padding: 20px 25px;
+      color: #7ef4f9;
+      margin-bottom: 60px;
+      max-width: 700px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #00fff7aa;
+      letter-spacing: 1px;
+      line-height: 1.6;
+      font-size: 1.2rem;
+      white-space: pre-wrap;
+      text-shadow: 0 0 3px #00fff7cc;
+    }
+
+    /* Responsive */
     @media (max-width: 700px) {
       header h1 {
         font-size: 2.6rem;
       }
-
       main {
         flex-direction: column;
         align-items: center;
       }
-
       section {
         max-width: 90%;
+      }
+      nav a {
+        margin: 0 12px;
+        font-size: 1rem;
+      }
+      .about-me {
+        max-width: 90%;
+        font-size: 1rem;
       }
     }
   </style>
 </head>
 <body>
 
-  <header role="banner">
+  <canvas id="matrix"></canvas>
+
+  <nav role="navigation" aria-label="Menú principal">
+    <a href="#inicio">Inicio</a>
+    <a href="#lenguajes">Lenguajes</a>
+    <a href="#habilidades">Habilidades</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+
+  <header role="banner" id="inicio">
     <h1>Hola, soy Gonza</h1>
     <p>Tengo 20 años, soy argentino y estudio Ciberseguridad por mi cuenta.<br />
        También voy a la facultad para estudiar Analista de Sistemas.</p>
   </header>
 
+  <div class="about-me" aria-label="Sobre mí">
+    <code>
+    &gt; echo "Apasionado por la seguridad informática y la tecnología."<br>
+    &gt; echo "Me gusta programar, aprender y resolver problemas complejos."<br>
+    &gt; echo "Actualmente explorando pentesting y redes."  
+    </code>
+  </div>
+
   <main>
-    <section aria-labelledby="lenguajes-titulo">
+    <section aria-labelledby="lenguajes-titulo" id="lenguajes">
       <h2 id="lenguajes-titulo">Lenguajes aprendidos</h2>
       <ul>
         <li><i class="fas fa-code skill-icon"></i>Python</li>
         <li><i class="fas fa-code skill-icon"></i>Java</li>
-        <li><i class="fas fa-code skill-icon"></i>HTML & CSS</li>
+        <li><i class="fas fa-code skill-icon"></i>HTML &amp; CSS</li>
         <li><i class="fas fa-code skill-icon"></i>JavaScript</li>
         <li><i class="fas fa-code skill-icon"></i>Bash</li>
       </ul>
     </section>
+
+    <section aria-labelledby="habilidades-titulo" id="habilidades">
+      <h2 id="habilidades-titulo">informacion mia</h2>
+      <ul>
+        <li><i class="fas fa-shield-alt skill-icon"></i>programar bots en discord en python</li>
+        <li><i class="fas fa-network-wired skill-icon"></i>soy apacionado de aprender y me gusta mucho de charlar</li>
+        <li><i class="fas fa-database skill-icon"></i>estudio analista sitema</li>
+        <li><i class="fas fa-terminal skill-icon"></i>me gusta mucho la ciberseguridad</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="contacto-titulo" id="contacto">
+      <h2 id="contacto-titulo">Contacto</h2>
+      <div class="contact-list">
+        <a href="mailto:gonza@email.com"><i class="fas fa-envelope"></i> gonza@email.com</a>
+        <a href="https://www.linkedin.com/in/gonza" target="_blank" rel="noopener noreferrer">
+          <i class="fab fa-linkedin"></i> LinkedIn
+        </a>
+        <a href="https://github.com/tuusuario" target="_blank" rel="noopener noreferrer">
+          <i class="fab fa-github"></i> GitHub
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Código matrix (lluvia de caracteres)
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const letters = "abcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()*&^%+-/~{[|`]}".split("");
+    const fontSize = 16;
+    const columns = Math.floor(width / fontSize);
+
+    const drops = [];
+    for(let x = 0; x < columns; x++) {
+      drops[x] = Math.random() * height;
+    }
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.fillStyle = "#0F0";
+      ctx.font = fontSize + "px 'JetBrains Mono', monospace";
+
+      for(let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if(drops[i] * fontSize > height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 35);
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+  </script>
 
 </body>
 </html>
