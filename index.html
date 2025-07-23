@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CyberLog - Blog de Ciberseguridad</title>
   <style>
     body {
@@ -13,57 +13,50 @@
       padding: 0;
       transition: background 0.3s, color 0.3s;
     }
-
     .light-mode {
       background-color: #f5f5f5;
       color: #000;
     }
-
     header, footer {
       background: #1e1e1e;
       color: white;
       padding: 20px;
       text-align: center;
     }
-
     .light-mode header,
     .light-mode footer {
       background: #ddd;
       color: #000;
     }
-
     nav ul {
       list-style: none;
       padding: 0;
     }
-
     nav li {
       display: inline-block;
       margin: 0 10px;
     }
-
     nav a {
       color: inherit;
       text-decoration: none;
     }
-
     .container {
       max-width: 800px;
       margin: auto;
       padding: 20px;
     }
-
     .blog-entry {
       border: 1px solid #444;
       padding: 15px;
       margin: 15px 0;
       border-radius: 8px;
+      background-color: #1a1a1a;
+      transition: background-color 0.3s, border-color 0.3s;
     }
-
     .light-mode .blog-entry {
       border-color: #aaa;
+      background-color: #fafafa;
     }
-
     button, input, textarea {
       padding: 10px;
       margin: 5px 0;
@@ -71,23 +64,34 @@
       border: none;
       font-size: 1em;
     }
-
     .admin-panel {
       display: none;
       margin-top: 20px;
       border-top: 2px dashed #555;
       padding-top: 10px;
     }
-
     .spam-warning {
       color: red;
       font-size: 0.9em;
     }
-
     #toggle-mode {
       float: right;
       margin-top: -40px;
       margin-right: 20px;
+      background: none;
+      border: none;
+      color: #00ffd5;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+    .light-mode #toggle-mode {
+      color: #007a7a;
+    }
+    button:hover {
+      background-color: #00ffd5;
+      color: black;
+      cursor: pointer;
+      transition: 0.3s;
     }
   </style>
 </head>
@@ -97,7 +101,7 @@
     <h2>🔐 Explorando la Seguridad Informática</h2>
     <p>💻 Aprendiendo a proteger lo que otros no ven</p>
     <p>🧠 Observa, analiza, protege.</p>
-    <button id="toggle-mode">🌙/☀️</button>
+    <button id="toggle-mode" title="Cambiar modo claro/oscuro">🌙</button>
     <nav>
       <ul>
         <li><a href="#">Inicio</a></li>
@@ -113,15 +117,15 @@
 
     <div id="login-form">
       <h3>🔐 Acceso de Administrador</h3>
-      <input type="password" id="admin-pass" placeholder="Contraseña de admin">
+      <input type="password" id="admin-pass" placeholder="Contraseña de admin" />
       <button onclick="login()">Ingresar</button>
       <p id="login-msg"></p>
     </div>
 
     <div class="admin-panel" id="admin-panel">
       <h3>🛠 Panel de Administración</h3>
-      <textarea id="new-title" placeholder="Título del post"></textarea><br>
-      <textarea id="new-content" placeholder="Contenido..."></textarea><br>
+      <input type="text" id="new-title" placeholder="Título del post" />
+      <textarea id="new-content" placeholder="Contenido..."></textarea>
       <button onclick="addPost()">📤 Publicar</button>
       <p id="spam-warning" class="spam-warning"></p>
     </div>
@@ -133,89 +137,147 @@
 
   <script>
     const ADMIN_PASSWORD = "Cyb3rLog!2025#";
+    const discordWebhook = "https://discord.com/api/webhooks/ID/WEBHOOK"; // Pon tu webhook aquí
+
     const postsContainer = document.getElementById("posts");
+    const adminPanel = document.getElementById("admin-panel");
+    const loginForm = document.getElementById("login-form");
+    const loginMsg = document.getElementById("login-msg");
+    const spamWarning = document.getElementById("spam-warning");
+    const toggleModeBtn = document.getElementById("toggle-mode");
+
     let isAdmin = false;
     let lastPostTime = 0;
+    let posts = [];
 
-    const discordWebhook = "https://discord.com/api/webhooks/ID/WEBHOOK"; // <-- Reemplaza esto
+    // Carga posts de localStorage
+    function loadPosts() {
+      const saved = localStorage.getItem("cyberlog-posts");
+      posts = saved ? JSON.parse(saved) : [];
+    }
 
-    const posts = [];
+    // Guarda posts en localStorage
+    function savePosts() {
+      localStorage.setItem("cyberlog-posts", JSON.stringify(posts));
+    }
 
+    // Muestra posts en pantalla
     function renderPosts() {
       postsContainer.innerHTML = "";
+      if(posts.length === 0){
+        postsContainer.innerHTML = "<p>No hay publicaciones aún.</p>";
+        return;
+      }
       posts.forEach((post, index) => {
-        const entry = document.createElement("div");
+        const entry = document.createElement("section");
         entry.className = "blog-entry";
         entry.innerHTML = `
-          <h3>${post.title}</h3>
-          <p>${post.content}</p>
+          <h3>${escapeHtml(post.title)}</h3>
+          <p>${escapeHtml(post.content).replace(/\n/g, "<br>")}</p>
           ${isAdmin ? `<button onclick="deletePost(${index})">🗑️ Eliminar</button>` : ""}
         `;
         postsContainer.appendChild(entry);
       });
     }
 
+    // Evitar XSS básico
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        }[m];
+      });
+    }
+
+    // Login admin
     function login() {
       const pass = document.getElementById("admin-pass").value;
       if (pass === ADMIN_PASSWORD) {
         isAdmin = true;
-        document.getElementById("admin-panel").style.display = "block";
-        document.getElementById("login-form").style.display = "none";
+        adminPanel.style.display = "block";
+        loginForm.style.display = "none";
+        loginMsg.textContent = "";
         renderPosts();
       } else {
-        document.getElementById("login-msg").innerText = "❌ Contraseña incorrecta";
+        loginMsg.textContent = "❌ Contraseña incorrecta";
       }
+      document.getElementById("admin-pass").value = "";
     }
 
+    // Agregar post nuevo
     function addPost() {
       const now = Date.now();
       if (now - lastPostTime < 10000) {
-        document.getElementById("spam-warning").innerText = "🛑 Espera unos segundos antes de publicar de nuevo.";
+        spamWarning.textContent = "🛑 Espera 10 segundos antes de publicar otra vez.";
         return;
       }
 
       const title = document.getElementById("new-title").value.trim();
       const content = document.getElementById("new-content").value.trim();
-      if (!title || !content) return;
+      if (!title || !content) {
+        spamWarning.textContent = "⚠️ Completa título y contenido.";
+        return;
+      }
 
-      posts.push({ title, content });
+      posts.unshift({ title, content });
+      savePosts();
       renderPosts();
 
       document.getElementById("new-title").value = "";
       document.getElementById("new-content").value = "";
-      document.getElementById("spam-warning").innerText = "";
-
+      spamWarning.textContent = "";
       lastPostTime = now;
 
-      // Enviar log a Discord
+      // Log a Discord
       fetch(discordWebhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: `📢 Nuevo post publicado en CyberLog:\n**${title}**\n${content}`
         })
+      }).catch(() => {
+        console.warn("No se pudo enviar el log a Discord.");
       });
     }
 
+    // Eliminar post
     function deletePost(index) {
       const title = posts[index].title;
+      if (!confirm(`¿Eliminar el post "${title}"?`)) return;
+
       posts.splice(index, 1);
+      savePosts();
       renderPosts();
 
-      // Log en Discord
+      // Log a Discord
       fetch(discordWebhook, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           content: `🗑️ El admin eliminó el post: **${title}**`
         })
+      }).catch(() => {
+        console.warn("No se pudo enviar el log a Discord.");
       });
     }
 
-    // Modo oscuro/claro
-    document.getElementById("toggle-mode").onclick = () => {
+    // Toggle modo claro/oscuro
+    toggleModeBtn.addEventListener("click", () => {
       document.body.classList.toggle("light-mode");
-    };
+      if(document.body.classList.contains("light-mode")) {
+        toggleModeBtn.textContent = "🌙";
+      } else {
+        toggleModeBtn.textContent = "☀️";
+      }
+    });
+
+    // Inicialización
+    loadPosts();
+    renderPosts();
   </script>
 </body>
 </html>
