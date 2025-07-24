@@ -1,365 +1,136 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Gonza - Analista de Sistemas & Ciberseguridad</title>
-  <meta name="description" content="Portfolio de Gonza, estudiante de Analista de Sistemas y entusiasta de Ciberseguridad" />
-  <meta name="keywords" content="Gonza, analista de sistemas, ciberseguridad, python, java, html, portfolio" />
-  <link rel="icon" href="favicon.ico" type="image/x-icon" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&family=Montserrat:wght@400;700&display=swap');
-
-    /* --------- FONDO MATRIX --------- */
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Montserrat', sans-serif;
-      background: black;
-      overflow-x: hidden;
-      color: #c0fefc;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      line-height: 1.5;
-      position: relative;
-      z-index: 1;
-    }
-
-    canvas#matrix {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      background: black;
-      display: block;
-    }
-
-    /* --------- NAV --------- */
-    nav {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background: rgba(0, 255, 247, 0.15);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid #00fff7bb;
-      padding: 12px 30px;
-      display: flex;
-      justify-content: center;
-      z-index: 10;
-      box-shadow: 0 0 15px #00fff7aa;
-    }
-    nav a {
-      color: #00fff7;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      font-size: 1.1rem;
-      text-decoration: none;
-      margin: 0 20px;
-      transition: color 0.3s ease;
-    }
-    nav a:hover {
-      color: #00c7b7;
-    }
-
-    /* --------- HEADER --------- */
-    header {
-      max-width: 700px;
-      background: rgba(0,255,247,0.12);
-      padding: 50px 40px 40px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px #00fff7cc;
-      text-align: center;
-      margin: 100px auto 60px;
-      border: 1.5px solid #00fff7aa;
-      position: relative;
-      z-index: 2;
-    }
-
-    header h1 {
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      font-size: 3.8rem;
-      color: #00fff7;
-      text-shadow:
-        0 0 5px #00fff7,
-        0 0 10px #00fff7,
-        0 0 20px #00fff7,
-        0 0 30px #00fff7cc;
-      margin-bottom: 15px;
-      letter-spacing: 3px;
-    }
-
-    header p {
-      font-size: 1.3rem;
-      color: #a0f0f8;
-      max-width: 520px;
-      margin: 0 auto;
-      font-weight: 500;
-      font-family: 'JetBrains Mono', monospace;
-      text-shadow: 0 0 4px #00fff7aa;
-      line-height: 1.6;
-    }
-
-    main {
-      display: flex;
-      gap: 30px;
-      flex-wrap: wrap;
-      justify-content: center;
-      max-width: 900px;
-      width: 100%;
-      margin-bottom: 60px;
-      z-index: 2;
-      position: relative;
-    }
-
-    section {
-      background: rgba(0, 255, 247, 0.12);
-      padding: 30px 25px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #00fff7bb;
-      flex: 1 1 280px;
-      transition: transform 0.3s ease;
-      border: 1px solid #00fff7bb;
-      color: #b2f1f8;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    section:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 0 25px #00fff7ee;
-      border-color: #00c7b7;
-      background: rgba(0, 199, 183, 0.15);
-    }
-
-    section h2 {
-      font-weight: 700;
-      font-size: 2rem;
-      color: #00fff7;
-      margin-bottom: 18px;
-      border-bottom: 2px solid #00fff7;
-      padding-bottom: 6px;
-      text-shadow: 0 0 5px #00fff7bb;
-    }
-
-    ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    ul li {
-      font-size: 1.1rem;
-      margin-bottom: 12px;
-      padding-left: 28px;
-      position: relative;
-      font-weight: 500;
-      color: #b2f1f8;
-    }
-
-    ul li::before {
-      content: "\f121"; /* icono terminal de fontawesome */
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      position: absolute;
-      left: 0;
-      top: 3px;
-      color: #00fff7;
-    }
-
-    /* Botón simple */
-    .btn {
-      display: inline-block;
-      background: #00fff7;
-      color: #0f111a;
-      font-weight: 700;
-      padding: 10px 20px;
-      border-radius: 30px;
-      text-decoration: none;
-      margin-top: 15px;
-      box-shadow: 0 0 15px #00fff7aa;
-      transition: background 0.3s ease, color 0.3s ease;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .btn:hover {
-      background: #00c7b7;
-      color: #fff;
-    }
-
-    /* Contacto */
-    .contact-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      font-size: 1.1rem;
-    }
-
-    .contact-list a {
-      color: #00fff7;
-      text-decoration: none;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      transition: color 0.3s ease;
-    }
-
-    .contact-list a:hover {
-      color: #00c7b7;
-    }
-
-    /* Iconos en sección habilidades */
-    .skill-icon {
-      margin-right: 8px;
-      color: #00fff7;
-      font-size: 1.3rem;
-      vertical-align: middle;
-    }
-
-    /* Sobre mi estilo hacker */
-    .about-me {
-      font-family: 'JetBrains Mono', monospace;
-      background: rgba(0,255,247,0.08);
-      border-left: 4px solid #00fff7;
-      padding: 20px 25px;
-      color: #7ef4f9;
-      margin-bottom: 60px;
-      max-width: 700px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #00fff7aa;
-      letter-spacing: 1px;
-      line-height: 1.6;
-      font-size: 1.2rem;
-      white-space: pre-wrap;
-      text-shadow: 0 0 3px #00fff7cc;
-    }
-
-    /* Responsive */
-    @media (max-width: 700px) {
-      header h1 {
-        font-size: 2.6rem;
-      }
-      main {
-        flex-direction: column;
-        align-items: center;
-      }
-      section {
-        max-width: 90%;
-      }
-      nav a {
-        margin: 0 12px;
-        font-size: 1rem;
-      }
-      .about-me {
-        max-width: 90%;
-        font-size: 1rem;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bingo Tragamonedas Web</title>
+<style>
+  body {
+    background: linear-gradient(135deg, #1e1e2f, #121222);
+    color: white;
+    font-family: 'Arial Black', sans-serif;
+    text-align: center;
+    margin: 0; padding: 20px;
+  }
+  .slot-machine {
+    margin-top: 40px;
+  }
+  .reels {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .reel {
+    font-size: 80px;
+    background: #292944;
+    padding: 20px;
+    margin: 0 10px;
+    border-radius: 15px;
+    width: 120px;
+    height: 120px;
+    line-height: 120px;
+    box-shadow: 0 0 15px #00ff88;
+  }
+  button {
+    font-size: 24px;
+    padding: 10px 25px;
+    background-color: #00bfff;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00bfff;
+    transition: background-color 0.3s ease;
+  }
+  button:hover {
+    background-color: #0099cc;
+  }
+  .info {
+    margin-top: 20px;
+    font-size: 20px;
+  }
+  .balance, .bet {
+    margin: 10px;
+  }
+  .bet-buttons button {
+    font-size: 18px;
+    margin: 0 5px;
+    width: 40px;
+  }
+</style>
 </head>
 <body>
-
-  <canvas id="matrix"></canvas>
-
-  <nav role="navigation" aria-label="Menú principal">
-    <a href="#inicio">Inicio</a>
-    <a href="#lenguajes">Lenguajes</a>
-    <a href="#habilidades">Habilidades</a>
-    <a href="#contacto">Contacto</a>
-  </nav>
-
-  <header role="banner" id="inicio">
-    <h1>Hola, soy Gonza</h1>
-    <p>Tengo 20 años, soy argentino y estudio Ciberseguridad por mi cuenta.<br />
-       También voy a la facultad para estudiar Analista de Sistemas.</p>
-  </header>
-
-  <div class="about-me" aria-label="Sobre mí">
-    <code>
-    &gt; echo "Apasionado por la seguridad informática y la tecnología."<br>
-    &gt; echo "Me gusta programar, aprender y resolver problemas complejos."<br>
-    &gt; echo "Actualmente explorando pentesting y redes."  
-    </code>
+  <h1>🎰 Bingo Tragamonedas Web 🎰</h1>
+  <div class="balance">Balance: <span id="balance">100</span> 💰</div>
+  <div class="bet">
+    Apuesta: <span id="bet">10</span> 💵
+    <div class="bet-buttons">
+      <button id="bet-down">➖</button>
+      <button id="bet-up">➕</button>
+    </div>
   </div>
-
-  <main>
-    <section aria-labelledby="lenguajes-titulo" id="lenguajes">
-      <h2 id="lenguajes-titulo">Lenguajes aprendidos</h2>
-      <ul>
-        <li><i class="fas fa-code skill-icon"></i>Python</li>
-        <li><i class="fas fa-code skill-icon"></i>Java</li>
-        <li><i class="fas fa-code skill-icon"></i>HTML &amp; CSS</li>
-        <li><i class="fas fa-code skill-icon"></i>JavaScript</li>
-        <li><i class="fas fa-code skill-icon"></i>Bash</li>
-      </ul>
-    </section>
-
-    <section aria-labelledby="habilidades-titulo" id="habilidades">
-      <h2 id="habilidades-titulo">informacion mia</h2>
-      <ul>
-        <li><i class="fas fa-shield-alt skill-icon"></i>programar bots en discord en python</li>
-        <li><i class="fas fa-network-wired skill-icon"></i>soy apacionado de aprender y me gusta mucho de charlar</li>
-        <li><i class="fas fa-database skill-icon"></i>estudio analista sitema</li>
-        <li><i class="fas fa-terminal skill-icon"></i>me gusta mucho la ciberseguridad</li>
-      </ul>
-    </section>
-
-<section aria-labelledby="contacto-titulo" id="contacto">
-  <h2 id="contacto-titulo">Contacto</h2>
-  <div class="contact-list">
-    <a href="Proximamente" target="_blank" rel="noopener noreferrer">
-      <i class="fab fa-discord"></i> Discord
-    </a>
+  <div class="slot-machine">
+    <div class="reels">
+      <div class="reel" id="reel1">❔</div>
+      <div class="reel" id="reel2">❔</div>
+      <div class="reel" id="reel3">❔</div>
+    </div>
+    <button id="spin-btn">Tirar 🎲</button>
+    <div class="info" id="result-msg"></div>
   </div>
-</section>
-
 
   <script>
-    // Código matrix (lluvia de caracteres)
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
+    const symbols = ['🍒', '🔔', '🍋', '⭐', '7️⃣', '🍇', '💎'];
+    let balance = 100;
+    let bet = 10;
 
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
+    const balanceEl = document.getElementById('balance');
+    const betEl = document.getElementById('bet');
+    const reelEls = [document.getElementById('reel1'), document.getElementById('reel2'), document.getElementById('reel3')];
+    const resultMsg = document.getElementById('result-msg');
+    const spinBtn = document.getElementById('spin-btn');
+    const betUp = document.getElementById('bet-up');
+    const betDown = document.getElementById('bet-down');
 
-    const letters = "abcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()*&^%+-/~{[|`]}".split("");
-    const fontSize = 16;
-    const columns = Math.floor(width / fontSize);
-
-    const drops = [];
-    for(let x = 0; x < columns; x++) {
-      drops[x] = Math.random() * height;
-    }
-
-    function draw() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, width, height);
-
-      ctx.fillStyle = "#0F0";
-      ctx.font = fontSize + "px 'JetBrains Mono', monospace";
-
-      for(let i = 0; i < drops.length; i++) {
-        const text = letters[Math.floor(Math.random() * letters.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-
-        if(drops[i] * fontSize > height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
+    betUp.addEventListener('click', () => {
+      if (bet < balance && bet < 50) {
+        bet += 5;
+        betEl.textContent = bet;
       }
-    }
-
-    setInterval(draw, 35);
-
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
     });
-  </script>
+    betDown.addEventListener('click', () => {
+      if (bet > 5) {
+        bet -= 5;
+        betEl.textContent = bet;
+      }
+    });
 
-</body>
-</html>
+    spinBtn.addEventListener('click', () => {
+      if (balance < bet) {
+        resultMsg.textContent = "❌ No tienes suficiente balance.";
+        return;
+      }
+
+      balance -= bet;
+      balanceEl.textContent = balance;
+
+      let result = [];
+      for(let i=0; i<3; i++){
+        const sym = symbols[Math.floor(Math.random()*symbols.length)];
+        reelEls[i].textContent = sym;
+        result.push(sym);
+      }
+
+      // Verificar premios
+      let prize = 0;
+      if (result[0] === result[1] && result[1] === result[2]) prize = bet * 10;
+      else if (result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) prize = bet * 3;
+
+      if(prize > 0){
+        balance += prize;
+        balanceEl.textContent = balance;
+        resultMsg.textContent = `🎉 Ganaste ${prize} monedas!`;
+      } else {
+        resultMsg.textContent = "😞 No ganaste esta vez.";
+      }
+    });
