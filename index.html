@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mi Portafolio</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome para iconos -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
   <style>
     /* Tipografía moderna */
     body {
@@ -44,6 +47,15 @@
     .btn:hover {
       transform: scale(1.05);
     }
+
+    /* Animación suave para badge */
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    .animate-pulse-slow {
+      animation: pulse-slow 2s infinite;
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
@@ -80,6 +92,43 @@
       <span class="font-bold text-yellow-500">JavaScript</span> y 
       <span class="font-bold text-orange-500">HTML</span>.
     </p>
+
+    <!-- Badge En Desarrollo agregado -->
+    <div class="mt-8 flex justify-center">
+      <div class="relative group w-fit">
+        <!-- Badge -->
+        <div class="flex items-center space-x-2 bg-gradient-to-r from-green-400/20 to-green-500/20 text-green-400 
+                    px-4 py-2 rounded-full shadow-md border border-green-400/30 
+                    backdrop-blur-md animate-pulse-slow">
+          <!-- Punto indicador -->
+          <span class="w-3 h-3 bg-green-400 rounded-full shadow-lg"></span>
+          
+          <!-- Texto principal -->
+          <span class="font-semibold">En Desarrollo</span>
+          
+          <!-- Iconos de skills -->
+          <span class="flex space-x-1 ml-2">
+            <i class="fas fa-code"></i> <!-- Programación -->
+            <i class="fas fa-database"></i> <!-- Bases de datos -->
+            <i class="fas fa-chart-line"></i> <!-- Análisis de datos -->
+          </span>
+          
+          <!-- Progreso -->
+          <span class="ml-2 text-xs text-green-200">Progreso: 40%</span>
+        </div>
+
+        <!-- Mini barra de progreso debajo del badge -->
+        <div class="absolute left-1/2 transform -translate-x-1/2 mt-1 w-20 h-1 bg-green-600 rounded-full">
+          <div class="h-1 bg-green-400 rounded-full" style="width:40%"></div>
+        </div>
+
+        <!-- Tooltip con info adicional -->
+        <div class="absolute bottom-full mb-2 hidden group-hover:block bg-gray-800 text-white text-xs px-2 py-1 rounded text-center">
+          Estudiante de Analista de Sistemas<br>
+          Aprendiendo: Programación, SQL, Análisis de Datos
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- Proyectos -->
