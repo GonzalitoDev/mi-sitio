@@ -5,31 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mi Portafolio</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Tipografía moderna */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Efecto suave en links */
+    a {
+      transition: all 0.3s ease-in-out;
+    }
+
+    /* Hero con gradiente animado */
+    .hero {
+      background: linear-gradient(270deg, #2563eb, #3b82f6, #60a5fa);
+      background-size: 600% 600%;
+      animation: gradientMove 10s ease infinite;
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Tarjetas con hover bonito */
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+    }
+
+    /* Footer elegante */
+    footer {
+      background: linear-gradient(to right, #2563eb, #1d4ed8);
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-900 font-sans">
+<body class="bg-gray-100 text-gray-900">
 
   <!-- Encabezado -->
-  <header class="bg-blue-600 text-white p-6">
-    <div class="container mx-auto flex justify-between items-center">
-      <h1 class="text-3xl font-bold">Gonza</h1>
+  <header class="bg-blue-600 text-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center p-6">
+      <h1 class="text-3xl font-bold tracking-wide">Gonza</h1>
       <nav>
         <ul class="flex space-x-6">
-          <li><a href="#about" class="hover:underline">Sobre mí</a></li>
-          <li><a href="#projects" class="hover:underline">Proyectos</a></li>
-          <li><a href="#contact" class="hover:underline">Contacto</a></li>
+          <li><a href="#about" class="hover:text-yellow-300">Sobre mí</a></li>
+          <li><a href="#projects" class="hover:text-yellow-300">Proyectos</a></li>
+          <li><a href="#contact" class="hover:text-yellow-300">Contacto</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
   <!-- Hero -->
-  <section class="text-center py-20 bg-gradient-to-b from-blue-600 to-blue-400 text-white">
-    <h2 class="text-4xl font-bold mb-4">¡Bienvenido a mi portafolio!</h2>
-    <p class="text-lg">Estudiante de Análisis de Sistemas | Desarrollador en formación</p>
-    <a href="#projects" class="mt-6 inline-block bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold shadow-lg hover:bg-gray-100">Ver mis proyectos</a>
+  <section class="hero text-center py-20 text-white">
+    <h2 class="text-5xl font-extrabold mb-4 drop-shadow-lg">¡Bienvenido a mi portafolio!</h2>
+    <p class="text-lg mb-6">Estudiante de Análisis de Sistemas | Desarrollador en formación</p>
+    <a href="#projects" class="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold shadow-md hover:bg-gray-200 transition">Ver mis proyectos</a>
   </section>
-
 
   <!-- Sobre mí -->
   <section id="about" class="container mx-auto py-16 px-6">
@@ -38,7 +73,7 @@
       Soy estudiante de <strong>Análisis de Sistemas</strong> apasionado por la tecnología y el desarrollo de software.
       Me encanta aprender nuevas tecnologías y crear proyectos que resuelvan problemas reales.
       <br><br>
-      Lenguajes que manejo: <strong>Python</strong>, <strong>JavaScript</strong> y <strong>HTML</strong>.
+      Lenguajes que manejo: <span class="font-bold text-blue-600">Python</span>, <span class="font-bold text-yellow-500">JavaScript</span> y <span class="font-bold text-orange-500">HTML</span>.
     </p>
   </section>
 
@@ -49,7 +84,7 @@
       <div class="grid md:grid-cols-3 gap-8">
 
         <!-- Proyecto 1 -->
-        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+        <div class="card bg-white p-6 rounded-lg shadow-md">
           <img src="https://via.placeholder.com/300x200" alt="Juego Shooter" class="rounded-lg mb-4">
           <h3 class="text-xl font-bold mb-2">Juego Shooter</h3>
           <p class="text-gray-700 mb-4">Juego tipo arcade hecho en Python con BeeWare, exportado a Android.</p>
@@ -57,7 +92,7 @@
         </div>
 
         <!-- Proyecto 2 -->
-        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+        <div class="card bg-white p-6 rounded-lg shadow-md">
           <img src="https://via.placeholder.com/300x200" alt="Sistema Web" class="rounded-lg mb-4">
           <h3 class="text-xl font-bold mb-2">Sistema Web</h3>
           <p class="text-gray-700 mb-4">Aplicación web con Flask para gestión de pedidos y productos.</p>
@@ -65,7 +100,7 @@
         </div>
 
         <!-- Proyecto 3 -->
-        <div class="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition">
+        <div class="card bg-white p-6 rounded-lg shadow-md">
           <img src="https://via.placeholder.com/300x200" alt="Discord Bot" class="rounded-lg mb-4">
           <h3 class="text-xl font-bold mb-2">Bot para Discord</h3>
           <p class="text-gray-700 mb-4">Bot personalizado para servidores de rol en Roblox y Discord.</p>
@@ -80,15 +115,15 @@
   <section id="contact" class="container mx-auto py-16 px-6 text-center">
     <h2 class="text-3xl font-bold mb-6">Contacto</h2>
     <p class="mb-6">¿Querés colaborar conmigo? ¡Escribime!</p>
-    <div class="flex justify-center space-x-6">
-      <a href="mailto:tuemail@example.com" class="text-blue-600 text-2xl hover:scale-110 transition">📧</a>
-      <a href="https://github.com/tuusuario" target="_blank" class="text-blue-600 text-2xl hover:scale-110 transition">🐙</a>
-      <a href="https://linkedin.com/in/tuusuario" target="_blank" class="text-blue-600 text-2xl hover:scale-110 transition">💼</a>
+    <div class="flex justify-center space-x-6 text-3xl">
+      <a href="mailto:tuemail@example.com" class="hover:scale-110 transition">📧</a>
+      <a href="https://github.com/tuusuario" target="_blank" class="hover:scale-110 transition">🐙</a>
+      <a href="https://linkedin.com/in/tuusuario" target="_blank" class="hover:scale-110 transition">💼</a>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="bg-blue-600 text-white py-4 text-center">
+  <footer class="text-white py-4 text-center">
     © 2025 Gonzalo | Todos los derechos reservados
   </footer>
 
